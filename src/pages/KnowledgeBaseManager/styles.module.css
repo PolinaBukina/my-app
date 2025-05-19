@@ -1,0 +1,388 @@
+.container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+}
+
+.nav {
+    background-color: white;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.navContainer {
+    max-width: 80rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.navInner {
+    display: flex;
+    justify-content: space-between;
+    height: 4rem;
+}
+
+.navLeft {
+    display: flex;
+}
+
+.navLogo {
+    display: flex;
+    align-items: center;
+}
+
+.navLogoText {
+    margin-left: 0.5rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.navRight {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.menuButton {
+    color: #374151;
+    transition: color 0.2s;
+}
+
+.menuButton:hover {
+    color: #059669;
+}
+
+/* Side menu styles */
+.menuOverlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 10;
+}
+
+.menuContent {
+    position: relative;
+    width: 18rem;
+    max-width: 20rem;
+    background-color: white;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.menuHeader {
+    padding: 1.25rem;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.menuCloseButton {
+    color: #6b7280;
+    transition: color 0.2s;
+}
+
+.menuCloseButton:hover {
+    color: #374151;
+}
+
+.profileSection {
+    padding: 1.25rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.profileInfo {
+    display: flex;
+    align-items: center;
+}
+
+.profileAvatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 9999px;
+    background-color: #d1fae5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #059669;
+}
+
+.profileText {
+    margin-left: 0.75rem;
+}
+
+.profileName {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #111827;
+}
+
+.profileEmail {
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+.menuItems {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+.menuLink {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+    color: #374151;
+    transition: color 0.2s, background-color 0.2s;
+}
+
+.menuLink:hover {
+    color: #059669;
+    background-color: #ecfdf5;
+}
+
+.menuLinkActive {
+    background-color: #ecfdf5;
+    color: #059669;
+}
+
+.menuLinkIcon {
+    margin-right: 0.75rem;
+    color: #6b7280;
+}
+
+.menuLinkActive .menuLinkIcon {
+    color: #059669;
+}
+
+.menuLink:hover .menuLinkIcon {
+    color: #059669;
+}
+
+.submenuTitle {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #6b7280;
+    padding-left: 0.75rem;
+    padding-top: 0.25rem;
+}
+
+.submenuLink {
+    display: flex;
+    align-items: center;
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.375rem;
+    color: #374151;
+    transition: color 0.2s, background-color 0.2s;
+}
+
+.submenuLink:hover {
+    color: #059669;
+    background-color: #ecfdf5;
+}
+
+.submenuLinkActive {
+    background-color: #ecfdf5;
+    color: #059669;
+}
+
+.submenuLinkIcon {
+    margin-right: 0.5rem;
+}
+
+.menuFooter {
+    padding: 1rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+.logoutButton {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    color: white;
+    background-color: #10b981;
+    border-radius: 0.375rem;
+    transition: background-color 0.2s;
+}
+
+.logoutButton:hover {
+    background-color: #059669;
+}
+
+.versionText {
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+/* Main content styles */
+.mainContainer {
+    max-width: 80rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 2rem 1rem;
+}
+
+.backButton {
+    color: #059669;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    margin-right: 1rem;
+}
+
+.backButton:hover {
+    color: #065f46;
+}
+
+.projectTitle {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.sectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.sectionTitle {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #374151;
+}
+
+.uploadButton {
+    padding: 0.5rem 1rem;
+    background-color: #10b981;
+    color: white;
+    border-radius: 0.375rem;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.uploadButton:hover {
+    background-color: #059669;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.tableContainer {
+    background-color: white;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.table {
+    min-width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.tableHead {
+    background-color: #f9fafb;
+}
+
+.tableHeaderCell {
+    padding: 0.75rem 1.5rem;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.tableRow {
+    background-color: white;
+    transition: background-color 0.15s;
+}
+
+.tableRow:hover {
+    background-color: #f9fafb;
+}
+
+.tableCell {
+    padding: 1rem 1.5rem;
+    white-space: nowrap;
+    font-size: 0.875rem;
+}
+
+.cellContent {
+    display: flex;
+    align-items: center;
+}
+
+.fileIcon {
+    flex-shrink: 0;
+    height: 1.25rem;
+    width: 1.25rem;
+    color: #6b7280;
+}
+
+.fileName {
+    margin-left: 1rem;
+    font-weight: 500;
+    color: #111827;
+}
+
+.deleteButton {
+    color: #dc2626;
+    transition: color 0.2s;
+}
+
+.deleteButton:hover {
+    color: #991b1b;
+}
+
+.infoBox {
+    margin-top: 1.5rem;
+    background-color: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.infoContent {
+    display: flex;
+}
+
+.infoIcon {
+    flex-shrink: 0;
+    height: 1.25rem;
+    width: 1.25rem;
+    color: #3b82f6;
+}
+
+.infoText {
+    margin-left: 0.75rem;
+}
+
+.infoTitle {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #1e40af;
+}
+
+.infoList {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: #1d4ed8;
+}
+
+.infoListItem {
+    margin-bottom: 0.25rem;
+    list-style-type: disc;
+    padding-left: 1.25rem;
+}

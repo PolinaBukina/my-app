@@ -1,0 +1,446 @@
+.container {
+    min-height: 100vh;
+    background: linear-gradient(to bottom right, #f9fafb, #f3f4f6);
+}
+
+.navbar {
+    background-color: white;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.navContainer {
+    max-width: 80rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 1rem;
+}
+
+.navContent {
+    display: flex;
+    align-items: center;
+    height: 4rem;
+}
+
+.flex {
+    display: flex;
+    align-items: center;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.backButton {
+    display: flex;
+    align-items: center;
+    color: #374151;
+    transition: color 0.2s;
+    background-color: white;
+    border: 2px solid #10b981;
+    border-radius: 5px;
+    padding: 5px 15px;
+}
+
+.backButton:hover {
+    color: #1f2937;
+}
+
+.breadcrumbs {
+    display: flex;
+    align-items: center;
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+.breadcrumbActive {
+    color: #1f2937;
+    font-weight: 500;
+}
+
+.mainContainer {
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.projectTitle {
+    font-size: 1.875rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+}
+
+.projectDescription {
+    color: #6b7280;
+    margin-bottom: 2rem;
+}
+
+.tabs {
+    display: flex;
+    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 1.5rem;
+}
+
+.tab {
+    padding: 0.75rem 1rem;
+    margin-right: 0.5rem;
+    font-size: 0.875rem;
+    color: #6b7280;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    border-top: none;
+    border-right: none;
+    border-left: none;
+    background-color: none;
+}
+
+.tab:hover {
+    color: #1f2937;
+}
+
+.tabActive {
+    color: #10b981;
+    border-bottom-color: #10b981;
+    font-weight: 500;
+}
+
+.tabContent {
+    background-color: white;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.sectionTitle {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 1rem;
+}
+
+.knowledgeList {
+    margin-bottom: 2rem;
+}
+
+.knowledgeItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.knowledgeItem:last-child {
+    border-bottom: none;
+}
+
+.knowledgeInfo {
+    display: flex;
+    align-items: center;
+}
+
+.knowledgeName {
+    font-weight: 500;
+    color: #1f2937;
+    margin-bottom: 0.25rem;
+}
+
+.knowledgeMeta {
+    display: flex;
+    color: #6b7280;
+    font-size: 0.75rem;
+}
+
+.metaSeparator {
+    margin: 0 0.5rem;
+}
+
+.knowledgeActions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.actionButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.375rem;
+    color: #6b7280;
+    background-color: #f3f4f6;
+    transition: all 0.2s;
+}
+
+.actionButton:hover {
+    background-color: #e5e7eb;
+}
+
+.deleteButton:hover {
+    color: #ef4444;
+    background-color: #fee2e2;
+}
+
+.uploadButton {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background-color: #10b981;
+    color: white;
+    border-radius: 0.375rem;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.uploadButton:hover {
+    background-color: #059669;
+}
+
+.statsBlock {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}
+
+.statItem {
+    background-color: #f9fafb;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    text-align: center;
+}
+
+.statValue {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #10b981;
+    margin-bottom: 0.25rem;
+}
+
+.statLabel {
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+}
+
+.modal {
+    background-color: white;
+    border-radius: 0.5rem;
+    width: 100%;
+    max-width: 32rem;
+    padding: 1.5rem;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.modalTitle {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 1.5rem;
+}
+
+.uploadArea {
+    border: 2px dashed #e5e7eb;
+    border-radius: 0.375rem;
+    padding: 2rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    cursor: pointer;
+}
+
+.uploadArea:hover {
+    border-color: #9ca3af;
+}
+
+.fileInput {
+    display: none;
+}
+
+.modalActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+.cancelButton {
+    padding: 0.5rem 1rem;
+    color: #4b5563;
+    background-color: #f3f4f6;
+    border-radius: 0.375rem;
+    transition: background-color 0.2s;
+}
+
+.cancelButton:hover {
+    background-color: #e5e7eb;
+}
+
+.confirmButton {
+    padding: 0.5rem 1rem;
+    background-color: #10b981;
+    color: white;
+    border-radius: 0.375rem;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.confirmButton:hover {
+    background-color: #059669;
+}
+
+
+/* Стили для Drag and Drop */
+.dragActive {
+    border-color: #3b82f6 !important;
+    background-color: #f0f7ff !important;
+}
+
+.uploadArea {
+    border: 2px dashed #d1d5db;
+    border-radius: 0.5rem;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.uploadArea:hover {
+    border-color: #9ca3af;
+    background-color: #f9fafb;
+}
+
+.fileInput {
+    display: none;
+}
+
+.fileTypesHint {
+    color: #6b7280;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+}
+
+/* Стили для модального окна */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+}
+
+.modal {
+    background-color: white;
+    border-radius: 0.5rem;
+    width: 100%;
+    max-width: 32rem;
+    padding: 1.5rem;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.modalTitle {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.closeButton {
+    color: #6b7280;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem;
+}
+
+.closeButton:hover {
+    color: #4b5563;
+}
+
+.modalActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+.cancelButton {
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    background-color: #f3f4f6;
+    color: #4b5563;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.cancelButton:hover {
+    background-color: #e5e7eb;
+}
+
+.confirmButton {
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.confirmButton:hover {
+    background-color: #2563eb;
+}
+
+.confirmButton:disabled {
+    background-color: #bfdbfe;
+    cursor: not-allowed;
+}
+
+.progressBarContainer {
+    width: 100%;
+    height: 20px;
+    background-color: #f3f4f6;
+    border-radius: 4px;
+    margin: 10px 0;
+}
+
+.progressBar {
+    height: 100%;
+    background-color: #3b82f6;
+    border-radius: 4px;
+    color: white;
+    font-size: 12px;
+    text-align: center;
+    transition: width 0.3s ease;
+}
