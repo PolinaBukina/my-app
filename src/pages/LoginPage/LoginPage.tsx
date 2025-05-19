@@ -464,6 +464,20 @@ const LoginPage = () => {
             return;
         }
 
+        // Проверка на админа (без обращения к бэкенду)
+        if (username === 'admin' && password === 'admin123') {
+            login('admin', 'admin-token', true, rememberMe);
+
+            if (rememberMe) {
+                localStorage.setItem('token', 'admin-token');
+            } else {
+                sessionStorage.setItem('token', 'admin-token');
+            }
+
+            navigate('/dashboard'); // Или '/dashboard' если у вас один маршрут
+            return;
+        }
+
         setIsLoading(true);
 
         try {
