@@ -450,3 +450,96 @@
     text-align: center;
     transition: width 0.3s ease;
 }
+
+
+/* Блок действий в навбаре */
+.navActions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Выпадающий блок пользователя */
+.userDropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Информация о пользователе (видимая часть) */
+.userInfo {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    color: #4b5563;
+    /* Серый цвет текста */
+}
+
+.userInfo:hover {
+    background-color: #f3f4f6;
+    /* Светло-серый фон при наведении */
+}
+
+/* Выпадающее меню */
+.dropdownMenu {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    margin-top: 0.5rem;
+    min-width: 180px;
+    background-color: white;
+    border-radius: 0.375rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    z-index: 50;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s ease;
+}
+
+.userDropdown:hover .dropdownMenu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Элементы выпадающего меню */
+.dropdownItem {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    color: #4b5563;
+    /* Серый цвет текста */
+    transition: background-color 0.2s;
+    text-align: left;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.dropdownItem:hover {
+    background-color: #f3f4f6;
+    /* Светло-серый фон при наведении */
+    color: #111827;
+    /* Темно-серый цвет текста */
+}
+
+/* Специальные стили для кнопки выхода */
+.dropdownItem.logoutButtonFull {
+    color: white;
+    background-color: #10b981;
+    /* Зеленый цвет */
+    border-color: #10b981;
+    border-radius: 0.375rem;
+    justify-content: center;
+    margin: 0.25rem;
+    width: calc(100% - 0.5rem);
+}
+
+.dropdownItem.logoutButtonFull:hover {
+    background-color: #059669;
+    /* Темно-зеленый при наведении */
+}
