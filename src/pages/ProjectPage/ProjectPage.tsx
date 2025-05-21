@@ -387,8 +387,7 @@ const ProjectPage: React.FC = () => {
     };
 
     const handleLogout = () => {
-        // Здесь должна быть логика выхода
-        navigate('/login');
+        navigate('/');
     };
 
     const handleDrag = useCallback((e: React.DragEvent) => {
