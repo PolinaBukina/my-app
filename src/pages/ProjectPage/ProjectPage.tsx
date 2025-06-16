@@ -329,6 +329,350 @@
 
 
 
+// import React, { useState, useRef, useCallback } from 'react';
+// import { useNavigate } from 'react-router-dom';
+// import { Database, Menu, ChevronRight, Globe, LogOut, ChevronDown, Upload, Download, Trash2, Eye, ChevronLeft, X, User } from 'lucide-react';
+// import styles from './styles.module.css';
+// import { useAuthContext } from '../../helpers/authContext';
+
+// interface KnowledgeBase {
+//     id: string;
+//     name: string;
+//     date: string;
+//     size: string;
+// }
+
+// const ProjectPage: React.FC = () => {
+//     const [activeTab, setActiveTab] = useState<'knowledge' | 'settings' | 'prompt'>('knowledge');
+//     const [showUploadModal, setShowUploadModal] = useState(false);
+//     const [dragActive, setDragActive] = useState(false);
+//     const [uploadProgress, setUploadProgress] = useState(0);
+//     const [knowledgeBases, setKnowledgeBases] = useState<KnowledgeBase[]>([
+//         { id: '1', name: 'Техническая документация', date: '15.05.2025', size: '2.4 MB' },
+//         { id: '2', name: 'FAQ продукта', date: '10.05.2025', size: '1.1 MB' },
+//         { id: '3', name: 'История поддержки', date: '05.05.2025', size: '3.7 MB' },
+//     ]);
+//     const navigate = useNavigate();
+//     const fileInputRef = useRef<HTMLInputElement>(null);
+
+//     const [isEditing, setIsEditing] = useState(false);
+//     const [promptText, setPromptText] = useState('Текущий промпт...'); // Замените на актуальный промпт из API
+
+//     // Получаем имя пользователя из контекста авторизации
+//     const { state } = useAuthContext();
+//     const username = state.user?.username || 'Пользователь';
+
+//     const handleDelete = async (id: string) => {
+//         try {
+//             await fetch(`http://localhost:3000/api/files/${id}`, {
+//                 method: 'DELETE',
+//                 headers: {
+//                     'Authorization': `Bearer ${localStorage.getItem('token') || sessionStorage.getItem('token')}`
+//                 }
+//             });
+
+//             setKnowledgeBases(prev => prev.filter(base => base.id !== id));
+//         } catch (error) {
+//             console.error('Ошибка удаления:', error);
+//         }
+//     };
+
+//     const handleDownload = (id: string) => {
+//         console.log('Скачивание базы знаний:', id);
+//     };
+
+//     const handlePreview = (id: string) => {
+//         console.log('Предпросмотр базы знаний:', id);
+//     };
+
+//     const handleBackToProjects = () => {
+//         navigate('/dashboard');
+//     };
+
+//     const handleLogout = () => {
+//         navigate('/');
+//     };
+
+//     const handleDrag = useCallback((e: React.DragEvent) => {
+//         e.preventDefault();
+//         e.stopPropagation();
+//         if (e.type === 'dragenter' || e.type === 'dragover') {
+//             setDragActive(true);
+//         } else if (e.type === 'dragleave') {
+//             setDragActive(false);
+//         }
+//     }, []);
+
+//     const handleDrop = useCallback((e: React.DragEvent) => {
+//         e.preventDefault();
+//         e.stopPropagation();
+//         setDragActive(false);
+//         if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+//             const file = e.dataTransfer.files[0];
+//             handleFileUpload(file);
+//         }
+//     }, []);
+
+//     const handleFileUpload = async (file: File) => {
+//         console.log('пока не работает загрузка файлов')
+//     };
+
+//     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//         if (e.target.files && e.target.files[0]) {
+//             setUploadProgress(0);
+//             handleFileUpload(e.target.files[0]);
+//         }
+//         if (e.target) {
+//             e.target.value = '';
+//         }
+//     };
+
+//     const handleSavePrompt = async () => {
+//         try {
+//             // Здесь логика сохранения промпта (API-запрос)
+//             console.log('Сохранён промпт:', promptText);
+//             setIsEditing(false);
+//         } catch (error) {
+//             console.error('Ошибка сохранения:', error);
+//         }
+//     };
+
+//     return (
+//         <div className={styles.container}>
+//             <nav className={styles.navbar}>
+//                 <div className={styles.navContainer}>
+//                     <div className={styles.navContent}>
+//                         <div className={styles.flex}>
+//                             <button
+//                                 className={styles.backButton}
+//                                 onClick={handleBackToProjects}
+//                             >
+//                                 <ChevronLeft className="h-5 w-5 mr-1" />
+//                                 Назад к проектам
+//                             </button>
+
+//                             <div className={styles.breadcrumbs}>
+//                                 <span>Проекты</span>
+//                                 <ChevronRight className="h-4 w-4 mx-2" />
+//                                 <span className={styles.breadcrumbActive}>МосПолитех</span>
+//                             </div>
+//                         </div>
+
+//                         <div className={styles.navActions}>
+//                             {/* Блок пользователя */}
+//                             <div className={styles.userDropdown}>
+//                                 <div className={styles.userInfo}>
+//                                     <User className="h-5 w-5 mr-2" />
+//                                     <span>{username}</span>
+//                                     <ChevronDown className="h-4 w-4 ml-1" />
+//                                 </div>
+//                                 <div className={styles.dropdownMenu}>
+//                                     <button
+//                                         className={styles.dropdownItem}
+//                                         onClick={handleLogout}
+//                                     >
+//                                         <LogOut className="h-4 w-4 mr-2" />
+//                                         Выйти
+//                                     </button>
+//                                 </div>
+//                             </div>
+//                         </div>
+//                     </div>
+//                 </div>
+//             </nav>
+
+//             <main className={styles.mainContainer}>
+//                 <h1 className={styles.projectTitle}>МосПолитех</h1>
+//                 <p className={styles.projectDescription}>AI-ассистент по работе с текстовыми запросами пользователей</p>
+
+//                 <div className={styles.tabs}>
+//                     <button
+//                         className={`${styles.tab} ${activeTab === 'knowledge' ? styles.tabActive : ''}`}
+//                         onClick={() => setActiveTab('knowledge')}
+//                     >
+//                         Базы знаний
+//                     </button>
+//                     <button
+//                         className={`${styles.tab} ${activeTab === 'settings' ? styles.tabActive : ''}`}
+//                         onClick={() => setActiveTab('settings')}
+//                     >
+//                         Настройки
+//                     </button>
+//                     <button
+//                         className={`${styles.tab} ${activeTab === 'prompt' ? styles.tabActive : ''}`}
+//                         onClick={() => setActiveTab('prompt')}
+//                     >
+//                         Промпт
+//                     </button>
+//                 </div>
+
+//                 {activeTab === 'knowledge' && (
+//                     <div className={styles.tabContent}>
+//                         <div className={styles.knowledgeBases}>
+//                             <h3 className={styles.sectionTitle}>Загруженные базы знаний</h3>
+
+//                             <div className={styles.knowledgeList}>
+//                                 {knowledgeBases.map(base => (
+//                                     <div key={base.id} className={styles.knowledgeItem}>
+//                                         <div className={styles.knowledgeInfo}>
+//                                             <Database className="h-5 w-5 text-green-500 mr-3" />
+//                                             <div>
+//                                                 <h4 className={styles.knowledgeName}>{base.name}</h4>
+//                                                 <div className={styles.knowledgeMeta}>
+//                                                     <span>{base.date}</span>
+//                                                     <span className={styles.metaSeparator}>•</span>
+//                                                     <span>{base.size}</span>
+//                                                 </div>
+//                                             </div>
+//                                         </div>
+
+//                                         <div className={styles.knowledgeActions}>
+//                                             <button
+//                                                 className={styles.actionButton}
+//                                                 onClick={() => handlePreview(base.id)}
+//                                                 title="Предпросмотр"
+//                                             >
+//                                                 <Eye className="h-4 w-4" />
+//                                             </button>
+//                                             <button
+//                                                 className={styles.actionButton}
+//                                                 onClick={() => handleDownload(base.id)}
+//                                                 title="Скачать"
+//                                             >
+//                                                 <Download className="h-4 w-4" />
+//                                             </button>
+//                                             <button
+//                                                 className={`${styles.actionButton} ${styles.deleteButton}`}
+//                                                 onClick={() => handleDelete(base.id)}
+//                                                 title="Удалить"
+//                                             >
+//                                                 <Trash2 className="h-4 w-4" />
+//                                             </button>
+//                                         </div>
+//                                     </div>
+//                                 ))}
+//                             </div>
+
+//                             <button
+//                                 className={styles.uploadButton}
+//                                 onClick={() => setShowUploadModal(true)}
+//                             >
+//                                 <Upload className="h-5 w-5 mr-2" />
+//                                 Загрузить новую базу
+//                             </button>
+//                         </div>
+//                     </div>
+//                 )}
+
+//                 {activeTab === 'settings' && (
+//                     <div className={styles.tabContent}>
+//                         <h3 className={styles.sectionTitle}>Настройки проекта</h3>
+//                     </div>
+//                 )}
+
+//                 {activeTab === 'prompt' && (
+//                     <div className={styles.tabContent}>
+//                         <h3 className={styles.sectionTitle}>Настройка промпта</h3>
+
+//                         <div className={styles.promptContainer}>
+//                             {/* <div className={styles.promptHeader}> */}
+//                             <p className={styles.promptHint}>
+//                                 {!isEditing
+//                                     ? "Используйте кнопку 'Редактировать' для изменения промпта."
+//                                     : "Начните вводить промпт, чтобы задать поведение бота."
+//                                 }
+//                             </p>
+//                             <textarea
+//                                 className={`${styles.promptInput} ${!isEditing && promptText ? styles.promptDisabled : ''}`}
+//                                 value={promptText}
+//                                 onChange={(e) => setPromptText(e.target.value)}
+//                                 disabled={!isEditing && !!promptText} // Disabled только если есть текст и не редактируется
+//                                 placeholder="Введите системный промпт для AI-ассистента..."
+//                             />
+//                             {/* </div> */}
+//                             {promptText && ( // Кнопки только если есть текст
+//                                 <button
+//                                     className={styles.uploadButton}
+//                                     onClick={isEditing ? handleSavePrompt : () => setIsEditing(true)}
+//                                 >
+//                                     {isEditing ? 'Сохранить' : 'Редактировать'}
+//                                 </button>
+//                             )}
+
+//                         </div>
+//                     </div>
+//                 )}
+
+//                 {showUploadModal && (
+//                     <div className={styles.modalOverlay}>
+//                         <div className={styles.modal}>
+//                             <div className={styles.modalHeader}>
+//                                 <h3 className={styles.modalTitle}>Загрузка новой базы знаний</h3>
+//                                 <button onClick={() => setShowUploadModal(false)} className={styles.closeButton}>
+//                                     <X className="h-6 w-6" />
+//                                 </button>
+//                             </div>
+
+//                             {uploadProgress > 0 && (
+//                                 <div className={styles.progressBarContainer}>
+//                                     <div
+//                                         className={styles.progressBar}
+//                                         style={{ width: `${uploadProgress}%` }}
+//                                     >
+//                                         {uploadProgress}%
+//                                     </div>
+//                                 </div>
+//                             )}
+
+//                             <div
+//                                 className={`${styles.uploadArea} ${dragActive ? styles.dragActive : ''}`}
+//                                 onDragEnter={handleDrag}
+//                                 onDragLeave={handleDrag}
+//                                 onDragOver={handleDrag}
+//                                 onDrop={handleDrop}
+//                                 onClick={() => fileInputRef.current?.click()}
+//                             >
+//                                 <Upload className="h-12 w-12 text-gray-400 mb-2" />
+//                                 <p>Перетащите файлы сюда или нажмите для выбора</p>
+//                                 <input
+//                                     type="file"
+//                                     ref={fileInputRef}
+//                                     className={styles.fileInput}
+//                                     onChange={handleFileChange}
+//                                     accept=".pdf,.txt,.docx,.xlsx"
+//                                 />
+//                                 <p className={styles.fileTypesHint}>Поддерживаемые форматы: PDF, TXT, DOCX, XLSX</p>
+//                             </div>
+
+//                             <div className={styles.modalActions}>
+//                                 <button
+//                                     className={styles.cancelButton}
+//                                     onClick={() => setShowUploadModal(false)}
+//                                 >
+//                                     Отмена
+//                                 </button>
+//                                 <button
+//                                     className={styles.confirmButton}
+//                                     disabled={uploadProgress > 0}
+//                                     onClick={() => fileInputRef.current?.click()}
+//                                 >
+//                                     {uploadProgress > 0 ? 'Загрузка...' : 'Выбрать файл'}
+//                                 </button>
+//                             </div>
+//                         </div>
+//                     </div>
+//                 )}
+//             </main>
+//         </div>
+//     );
+// };
+
+// export default ProjectPage;
+
+
+
+
+
 import React, { useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Database, Menu, ChevronRight, Globe, LogOut, ChevronDown, Upload, Download, Trash2, Eye, ChevronLeft, X, User } from 'lucide-react';
@@ -343,7 +687,7 @@ interface KnowledgeBase {
 }
 
 const ProjectPage: React.FC = () => {
-    const [activeTab, setActiveTab] = useState<'knowledge' | 'settings' | 'stats'>('knowledge');
+    const [activeTab, setActiveTab] = useState<'knowledge' | 'settings' | 'prompt'>('knowledge');
     const [showUploadModal, setShowUploadModal] = useState(false);
     const [dragActive, setDragActive] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
@@ -355,7 +699,11 @@ const ProjectPage: React.FC = () => {
     const navigate = useNavigate();
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    // Получаем имя пользователя из контекста авторизации
+    const [isEditing, setIsEditing] = useState(false);
+    const [promptText, setPromptText] = useState('Текущий промпт...');
+    const [testMessage, setTestMessage] = useState('');
+    const [testResponses, setTestResponses] = useState<string[]>([]);
+
     const { state } = useAuthContext();
     const username = state.user?.username || 'Пользователь';
 
@@ -372,6 +720,15 @@ const ProjectPage: React.FC = () => {
         } catch (error) {
             console.error('Ошибка удаления:', error);
         }
+    };
+
+    const handleSendTestMessage = () => {
+        if (!testMessage.trim()) return;
+
+        // Здесь будет логика отправки сообщения и получения ответа
+        const mockResponse = `Ответ на: "${testMessage}"`;
+        setTestResponses(prev => [...prev, `Вы: ${testMessage}`, `Бот: ${mockResponse}`]);
+        setTestMessage('');
     };
 
     const handleDownload = (id: string) => {
@@ -421,6 +778,16 @@ const ProjectPage: React.FC = () => {
         }
         if (e.target) {
             e.target.value = '';
+        }
+    };
+
+    const handleSavePrompt = async () => {
+        try {
+            // Здесь логика сохранения промпта (API-запрос)
+            console.log('Сохранён промпт:', promptText);
+            setIsEditing(false);
+        } catch (error) {
+            console.error('Ошибка сохранения:', error);
         }
     };
 
@@ -479,11 +846,17 @@ const ProjectPage: React.FC = () => {
                     >
                         Базы знаний
                     </button>
-                    <button
+                    {/* <button
                         className={`${styles.tab} ${activeTab === 'settings' ? styles.tabActive : ''}`}
                         onClick={() => setActiveTab('settings')}
                     >
                         Настройки
+                    </button> */}
+                    <button
+                        className={`${styles.tab} ${activeTab === 'prompt' ? styles.tabActive : ''}`}
+                        onClick={() => setActiveTab('prompt')}
+                    >
+                        Промпт
                     </button>
                 </div>
 
@@ -545,9 +918,109 @@ const ProjectPage: React.FC = () => {
                     </div>
                 )}
 
-                {activeTab === 'settings' && (
-                    <div className={styles.tabContent}>
-                        <h3 className={styles.sectionTitle}>Настройки проекта</h3>
+                {/* Трехколоночный интерфейс для вкладки Prompt */}
+                {activeTab === 'prompt' && (
+                    <div className={styles.promptTabContainer}>
+                        {/* Левая колонка - Промпт */}
+                        <div className={styles.promptColumn}>
+                            <div className={styles.promptContent}>
+                                <h3 className={styles.sectionTitle}>Системный промпт</h3>
+                                <p className={styles.promptHint}>
+                                    {!isEditing
+                                        ? "Используйте кнопку 'Редактировать' для изменения промпта."
+                                        : "Начните вводить промпт, чтобы задать поведение бота."
+                                    }
+                                </p>
+                                <textarea
+                                    className={`${styles.promptInput} ${!isEditing && promptText ? styles.promptDisabled : ''}`}
+                                    value={promptText}
+                                    onChange={(e) => setPromptText(e.target.value)}
+                                    disabled={!isEditing && !!promptText}
+                                    placeholder="Введите системный промпт для AI-ассистента..."
+                                />
+                                {promptText && (
+                                    <button
+                                        className={styles.uploadButton}
+                                        onClick={isEditing ? handleSavePrompt : () => setIsEditing(true)}
+                                    >
+                                        {isEditing ? 'Сохранить' : 'Редактировать'}
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Средняя колонка - Настройки */}
+                        <div className={styles.settingsColumn}>
+                            <div className={styles.settingsContent}>
+                                <h3 className={styles.sectionTitle}>Настройки ответа</h3>
+
+                                <div className={styles.settingItem}>
+                                    <label>Тон общения</label>
+                                    <select className={styles.settingSelect}>
+                                        <option>Формальный</option>
+                                        <option>Дружелюбный</option>
+                                        <option>Технический</option>
+                                    </select>
+                                </div>
+
+                                <div className={styles.settingItem}>
+                                    <label>Длина ответа</label>
+                                    <select className={styles.settingSelect}>
+                                        <option>Краткий</option>
+                                        <option>Средний</option>
+                                        <option>Подробный</option>
+                                    </select>
+                                </div>
+
+                                <div className={styles.settingItem}>
+                                    <label>Источники знаний</label>
+                                    <div className={styles.knowledgeSources}>
+                                        {knowledgeBases.map(base => (
+                                            <div key={base.id} className={styles.sourceItem}>
+                                                <input type="checkbox" id={`source-${base.id}`} defaultChecked />
+                                                <label htmlFor={`source-${base.id}`}>{base.name}</label>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Правая колонка - Тестирование */}
+                        <div className={styles.testingColumn}>
+                            <div className={styles.testingContent}>
+                                <h3 className={styles.sectionTitle}>Тестирование</h3>
+
+                                <div className={styles.chatWindow}>
+                                    {testResponses.length > 0 ? (
+                                        testResponses.map((msg, index) => (
+                                            <div key={index} className={styles.chatMessage}>
+                                                {msg}
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p className={styles.emptyChatHint}>Начните диалог, чтобы проверить работу бота</p>
+                                    )}
+                                </div>
+
+                                <div className={styles.chatInputContainer}>
+                                    <input
+                                        type="text"
+                                        value={testMessage}
+                                        onChange={(e) => setTestMessage(e.target.value)}
+                                        placeholder="Введите тестовое сообщение..."
+                                        className={styles.chatInput}
+                                        onKeyPress={(e) => e.key === 'Enter' && handleSendTestMessage()}
+                                    />
+                                    <button
+                                        className={styles.sendButton}
+                                        onClick={handleSendTestMessage}
+                                    >
+                                        Отправить
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 )}
 

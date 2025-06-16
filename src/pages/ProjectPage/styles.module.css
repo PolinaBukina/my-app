@@ -543,3 +543,267 @@
     background-color: #059669;
     /* Темно-зеленый при наведении */
 }
+
+
+/* Prompt Tab Styles */
+.promptContainer {
+    margin-top: 1.5rem;
+    max-width: 800px;
+}
+
+.promptHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.promptLabel {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.promptInput {
+    width: 100%;
+    min-height: 200px;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    resize: vertical;
+    font-family: inherit;
+    background-color: var(--background);
+    color: var(--text-primary);
+}
+
+.promptInput:disabled {
+    background-color: var(--background-secondary);
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+.promptHint {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.editButton,
+.saveButton {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.editButton {
+    background-color: var(--accent);
+    color: white;
+    border: none;
+}
+
+.editButton:hover {
+    background-color: var(--accent-hover);
+}
+
+.saveButton {
+    background-color: var(--success);
+    color: white;
+    border: none;
+}
+
+.saveButton:hover {
+    background-color: var(--success-hover);
+}
+
+/* Добавьте эти стили в ваш styles.module.css */
+
+.promptContainer {
+    margin-top: 1.5rem;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.promptInput {
+    width: 100%;
+    min-height: 200px;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    resize: vertical;
+    font-family: inherit;
+    background-color: var(--background);
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+}
+
+/* Стили для активного поля */
+.promptInput:not(:disabled) {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+    background-color: var(--background);
+    width: 90%;
+}
+
+/* Стили для disabled состояния */
+.promptInput:disabled {
+    background-color: #f5f5f5;
+    border-color: #e0e0e0;
+    color: #666;
+    cursor: not-allowed;
+    position: relative;
+    width: 90%;
+}
+
+/* Эффект "заблокированности" */
+.promptInput:disabled::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(-45deg,
+            transparent,
+            transparent 5px,
+            rgba(255, 255, 255, 0.5) 5px,
+            rgba(255, 255, 255, 0.5) 10px);
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+.promptHint {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+/* Стили для кнопки (используем существующий .uploadButton) */
+.uploadButton {
+    align-self: flex-start;
+    padding: 0.5rem 1.5rem;
+}
+
+/* Дополнительные стили для подсказки в disabled состоянии */
+.promptDisabledHint {
+    color: #999;
+    font-style: italic;
+}
+
+/* Трехколоночный интерфейс для вкладки Prompt */
+.promptTabContainer {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.promptColumn,
+.settingsColumn,
+.testingColumn {
+    flex: 1;
+    background-color: white;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.promptColumn {
+    flex: 2;
+}
+
+.settingsColumn {
+    flex: 1;
+}
+
+.testingColumn {
+    flex: 1.5;
+}
+
+/* Стили для чата тестирования */
+.chatWindow {
+    height: 400px;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    overflow-y: auto;
+    background-color: #f9fafb;
+}
+
+.chatMessage {
+    margin-bottom: 0.75rem;
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+    background-color: white;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.emptyChatHint {
+    color: #6b7280;
+    text-align: center;
+    margin-top: 50%;
+    transform: translateY(-50%);
+}
+
+.chatInputContainer {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.chatInput {
+    flex: 1;
+    padding: 0.5rem 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.375rem;
+}
+
+.sendButton {
+    padding: 0.5rem 1rem;
+    background-color: #10b981;
+    color: white;
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+}
+
+.sendButton:hover {
+    background-color: #059669;
+}
+
+/* Стили для настроек */
+.settingItem {
+    margin-bottom: 1.5rem;
+}
+
+.settingItem label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #1f2937;
+}
+
+.settingSelect {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.375rem;
+}
+
+.knowledgeSources {
+    border: 1px solid #e5e7eb;
+    border-radius: 0.375rem;
+    padding: 0.5rem;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.sourceItem {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+}
+
+.sourceItem input {
+    margin-right: 0.5rem;
+}
