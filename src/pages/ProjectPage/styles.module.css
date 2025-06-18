@@ -1,8 +1,189 @@
+/* Базовые стили контейнера */
 .container {
     min-height: 100vh;
     background: linear-gradient(to bottom right, #f9fafb, #f3f4f6);
+    display: flex;
+    overflow-x: hidden;
 }
 
+/* Стили бокового меню */
+.sideMenu {
+    width: 16rem;
+    max-width: 20rem;
+    background-color: #f6f8fa;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #e5e7eb;
+    transition: all 0.3s ease;
+    position: relative;
+    border-radius: 15px;
+}
+
+
+.sideMenu.collapsed {
+    width: 80px;
+}
+
+.sideMenuHeader {
+    padding: 1.25rem;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logoContainer {
+    display: flex;
+    align-items: center;
+}
+
+.logoText {
+    margin-left: 0.5rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.sideMenu.collapsed .logoText {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+}
+
+.menuToggle {
+    background: rgba(146, 255, 146, 0.317);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #059669;
+    background-color: #c9f9d7;
+}
+
+.menuToggle:hover {
+    color: #036747;
+    background-color: #90fab0;
+    transition: .2s;
+}
+
+.rotate180 {
+    transform: rotate(180deg);
+}
+
+.sideMenuContent {
+    padding: 15px 0;
+    flex-grow: 1;
+}
+
+.sideMenuNav {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 0 10px;
+}
+
+.sideMenuItem {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    color: #374151;
+    text-decoration: none;
+    transition: all 0.2s;
+    white-space: nowrap;
+    border-radius: 4px;
+    gap: 12px;
+    cursor: pointer;
+    background: none;
+    border: none;
+}
+
+.sideMenuItem:hover {
+    color: #059669;
+    background-color: #c9f9d7;
+    transition: .2s;
+}
+
+.sideMenuItem:active {
+    color: #797979;
+    background-color: rgb(205, 203, 203);
+    transition: .2s;
+}
+
+.sideMenu.collapsed .sideMenuItem span {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+}
+
+.sideMenuFooter {
+    padding: 15px;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.userInfoSidebar {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+    color: #059669;
+    background-color: #c9f9d7;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+}
+
+.sideMenu.collapsed .userInfoSidebar span {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+}
+
+.logoutButtonFull {
+    width: 100%;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background-color: #10b981;
+    color: white;
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.logoutButtonFull:hover {
+    background-color: #059669;
+}
+
+.logoutButtonFull:active {
+    border-color: #10b981;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+
+
+.sideMenu.collapsed .logoutButtonFull span {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+}
+
+/* Основной контент */
+/* .mainContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    transition: margin-left 0.3s ease;
+} */
+
+/* Навбар */
 .navbar {
     background-color: white;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -12,45 +193,39 @@
     max-width: 80rem;
     margin-left: auto;
     margin-right: auto;
-    padding: 0 1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 
 .navContent {
     display: flex;
-    align-items: center;
-    height: 4rem;
-}
-
-.flex {
-    display: flex;
-    align-items: center;
-    display: flex;
-    align-items: center;
     justify-content: space-between;
-    width: 100%;
+    height: 4rem;
+    align-items: center;
 }
 
 .backButton {
     display: flex;
     align-items: center;
     color: #374151;
-    transition: color 0.2s;
-    background-color: white;
-    border: 2px solid #10b981;
-    border-radius: 5px;
-    padding: 5px 15px;
+    background: none;
+    border: none;
     cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    transition: background-color 0.2s;
 }
 
 .backButton:hover {
-    color: #1f2937;
+    background-color: #f3f4f6;
 }
 
 .breadcrumbs {
     display: flex;
     align-items: center;
-    color: #6b7280;
+    margin-left: 1rem;
     font-size: 0.875rem;
+    color: #6b7280;
 }
 
 .breadcrumbActive {
@@ -58,10 +233,80 @@
     font-weight: 500;
 }
 
+.navActions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.userDropdown {
+    position: relative;
+}
+
+.userInfo {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.userInfo:hover {
+    background-color: #f3f4f6;
+}
+
+.dropdownMenu {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    margin-top: 0.5rem;
+    width: 12rem;
+    background-color: white;
+    border-radius: 0.375rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    padding: 0.5rem 0;
+    z-index: 10;
+    display: none;
+}
+
+.userDropdown:hover .dropdownMenu {
+    display: block;
+}
+
+.dropdownItem {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 0.5rem 1rem;
+    text-align: left;
+    color: #374151;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.dropdownItem:hover {
+    background-color: #f3f4f6;
+    color: #059669;
+}
+
+/* Основное содержимое */
 .mainContainer {
+    width: 100%;
     max-width: 80rem;
-    margin: 0 auto;
+    margin-left: auto;
+    margin-right: auto;
     padding: 2rem 1rem;
+    box-sizing: border-box;
+    background-color: #f6f8fa;
+}
+
+.header {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 5px;
 }
 
 .projectTitle {
@@ -73,9 +318,10 @@
 
 .projectDescription {
     color: #6b7280;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
 }
 
+/* Табы */
 .tabs {
     display: flex;
     border-bottom: 1px solid #e5e7eb;
@@ -84,43 +330,51 @@
 
 .tab {
     padding: 0.75rem 1rem;
-    margin-right: 0.5rem;
-    font-size: 0.875rem;
+    background: none;
+    border: none;
+    cursor: pointer;
     color: #6b7280;
-    border-bottom: 2px solid transparent;
-    transition: all 0.2s;
-    border-top: none;
-    border-right: none;
-    border-left: none;
-    background-color: none;
+    font-weight: 500;
+    position: relative;
+    transition: color 0.2s;
 }
 
 .tab:hover {
-    color: #1f2937;
+    color: #059669;
 }
 
 .tabActive {
-    color: #10b981;
-    border-bottom-color: #10b981;
-    font-weight: 500;
+    color: #059669;
 }
 
+.tabActive::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: #059669;
+}
+
+/* Контент табов */
 .tabContent {
     background-color: white;
     border-radius: 0.5rem;
-    padding: 1.5rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
 }
 
 .sectionTitle {
-    font-size: 1.125rem;
+    font-size: 1.25rem;
     font-weight: 600;
     color: #1f2937;
     margin-bottom: 1rem;
 }
 
+/* Базы знаний */
 .knowledgeList {
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
 }
 
 .knowledgeItem {
@@ -128,11 +382,9 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
-    border-bottom: 1px solid #f3f4f6;
-}
-
-.knowledgeItem:last-child {
-    border-bottom: none;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.375rem;
+    margin-bottom: 0.75rem;
 }
 
 .knowledgeInfo {
@@ -148,8 +400,9 @@
 
 .knowledgeMeta {
     display: flex;
+    align-items: center;
     color: #6b7280;
-    font-size: 0.75rem;
+    font-size: 0.875rem;
 }
 
 .metaSeparator {
@@ -167,23 +420,27 @@
     justify-content: center;
     width: 2rem;
     height: 2rem;
-    border-radius: 0.375rem;
-    color: #014d35;
-    background-color: #f3f6f3;
+    border-radius: 0.25rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #6b7280;
     transition: all 0.2s;
-    border-color: #014d35;
 }
 
 .actionButton:hover {
-    color: #012f20;
-    background-color: #d6d7d6;
-    border-color: #012f20;
+    background-color: #f3f4f6;
+    color: #059669;
+}
+
+.actionButton:active {
+    border-color: #10b981;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
 }
 
 .deleteButton:hover {
-    color: #ef4444;
     background-color: #fee2e2;
-    border-color: #ef4444;
+    color: #dc2626;
 }
 
 .uploadButton {
@@ -191,10 +448,10 @@
     align-items: center;
     padding: 0.5rem 1rem;
     background-color: #10b981;
-    border-color: #10b981;
     color: white;
+    border: none;
     border-radius: 0.375rem;
-    font-weight: 500;
+    cursor: pointer;
     transition: background-color 0.2s;
 }
 
@@ -202,37 +459,12 @@
     background-color: #059669;
 }
 
-.statsBlock {
-    margin-top: 2rem;
-    padding-top: 2rem;
-    border-top: 1px solid #e5e7eb;
+.uploadButton:active {
+    border-color: #10b981;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
 }
 
-.statsGrid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
-}
-
-.statItem {
-    background-color: #f9fafb;
-    border-radius: 0.5rem;
-    padding: 1rem;
-    text-align: center;
-}
-
-.statValue {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #10b981;
-    margin-bottom: 0.25rem;
-}
-
-.statLabel {
-    color: #6b7280;
-    font-size: 0.875rem;
-}
-
+/* Модальное окно загрузки */
 .modalOverlay {
     position: fixed;
     top: 0;
@@ -251,89 +483,65 @@
     border-radius: 0.5rem;
     width: 100%;
     max-width: 32rem;
-    padding: 1.5rem;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+}
+
+.modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
 }
 
 .modalTitle {
     font-size: 1.25rem;
     font-weight: 600;
     color: #1f2937;
+}
+
+.closeButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #6b7280;
+    transition: color 0.2s;
+}
+
+.closeButton:hover {
+    color: #374151;
+}
+
+.progressBarContainer {
+    padding: 0 1.5rem;
     margin-bottom: 1.5rem;
+}
+
+.progressBar {
+    height: 0.5rem;
+    background-color: #10b981;
+    border-radius: 0.25rem;
+    text-align: center;
+    color: white;
+    font-size: 0.75rem;
+    line-height: 0.5rem;
 }
 
 .uploadArea {
     border: 2px dashed #e5e7eb;
     border-radius: 0.375rem;
-    padding: 2rem;
+    padding: 3rem 1.5rem;
     text-align: center;
-    margin-bottom: 1.5rem;
     cursor: pointer;
-}
-
-.uploadArea:hover {
-    border-color: #9ca3af;
-}
-
-.fileInput {
-    display: none;
-}
-
-.modalActions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.75rem;
-}
-
-.cancelButton {
-    padding: 0.5rem 1rem;
-    color: #4b5563;
-    background-color: #f3f4f6;
-    border-radius: 0.375rem;
-    transition: background-color 0.2s;
-}
-
-.cancelButton:hover {
-    background-color: #e5e7eb;
-}
-
-.confirmButton {
-    padding: 0.5rem 1rem;
-    background-color: #10b981;
-    color: white;
-    border-radius: 0.375rem;
-    font-weight: 500;
-    transition: background-color 0.2s;
-}
-
-.confirmButton:hover {
-    background-color: #059669;
-}
-
-
-/* Стили для Drag and Drop */
-.dragActive {
-    border-color: #3b82f6 !important;
-    background-color: #f0f7ff !important;
-}
-
-.uploadArea {
-    border: 2px dashed #d1d5db;
-    border-radius: 0.5rem;
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
+    margin: 0 1.5rem 1.5rem;
     transition: all 0.2s;
-    margin-bottom: 1.5rem;
-    text-align: center;
 }
 
-.uploadArea:hover {
-    border-color: #9ca3af;
-    background-color: #f9fafb;
+.uploadArea:hover,
+.dragActive {
+    border-color: #059669;
+    background-color: #f0fdf4;
 }
 
 .fileInput {
@@ -346,464 +554,286 @@
     margin-top: 0.5rem;
 }
 
-/* Стили для модального окна */
-.modalOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 50;
-}
-
-.modal {
-    background-color: white;
-    border-radius: 0.5rem;
-    width: 100%;
-    max-width: 32rem;
-    padding: 1.5rem;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-}
-
-.modalHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-}
-
-.modalTitle {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #111827;
-}
-
-.closeButton {
-    color: #6b7280;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0.25rem;
-}
-
-.closeButton:hover {
-    color: #4b5563;
-}
-
 .modalActions {
     display: flex;
     justify-content: flex-end;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e5e7eb;
     gap: 0.75rem;
 }
 
 .cancelButton {
     padding: 0.5rem 1rem;
+    background: none;
+    border: 1px solid #e5e7eb;
     border-radius: 0.375rem;
-    background-color: #f3f4f6;
-    color: #4b5563;
-    border: none;
     cursor: pointer;
-    font-weight: 500;
+    color: #374151;
+    transition: all 0.2s;
 }
 
 .cancelButton:hover {
-    background-color: #e5e7eb;
+    background-color: #f3f4f6;
 }
 
 .confirmButton {
     padding: 0.5rem 1rem;
-    border-radius: 0.375rem;
-    background-color: #3b82f6;
+    background-color: #10b981;
     color: white;
     border: none;
+    border-radius: 0.375rem;
     cursor: pointer;
-    font-weight: 500;
+    transition: background-color 0.2s;
 }
 
 .confirmButton:hover {
-    background-color: #2563eb;
+    background-color: #059669;
+}
+
+.confirmButton:active {
+    border-color: #10b981;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
 }
 
 .confirmButton:disabled {
-    background-color: #bfdbfe;
+    background-color: #d1fae5;
     cursor: not-allowed;
 }
 
-.progressBarContainer {
-    width: 100%;
-    height: 20px;
-    background-color: #f3f4f6;
-    border-radius: 4px;
-    margin: 10px 0;
-}
-
-.progressBar {
-    height: 100%;
-    background-color: #3b82f6;
-    border-radius: 4px;
-    color: white;
-    font-size: 12px;
-    text-align: center;
-    transition: width 0.3s ease;
-}
-
-
-/* Блок действий в навбаре */
-.navActions {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-/* Выпадающий блок пользователя */
-.userDropdown {
-    position: relative;
-    display: inline-block;
-}
-
-/* Информация о пользователе (видимая часть) */
-.userInfo {
-    display: flex;
-    align-items: center;
-    padding: 0.5rem 1rem;
-    border-radius: 0.375rem;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    color: #4b5563;
-    /* Серый цвет текста */
-}
-
-.userInfo:hover {
-    background-color: #f3f4f6;
-    /* Светло-серый фон при наведении */
-}
-
-/* Выпадающее меню */
-.dropdownMenu {
-    position: absolute;
-    right: 0;
-    top: 100%;
-    margin-top: 0.5rem;
-    min-width: 180px;
-    background-color: white;
-    border-radius: 0.375rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    z-index: 50;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-10px);
-    transition: all 0.2s ease;
-}
-
-.userDropdown:hover .dropdownMenu {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-}
-
-/* Элементы выпадающего меню */
-.dropdownItem {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    padding: 0.5rem 1rem;
-    color: #4b5563;
-    /* Серый цвет текста */
-    transition: background-color 0.2s;
-    text-align: left;
-    background: none;
-    border: none;
-    cursor: pointer;
-}
-
-.dropdownItem:hover {
-    background-color: #f3f4f6;
-    /* Светло-серый фон при наведении */
-    color: #111827;
-    /* Темно-серый цвет текста */
-}
-
-/* Специальные стили для кнопки выхода */
-.dropdownItem.logoutButtonFull {
-    color: white;
-    background-color: #10b981;
-    /* Зеленый цвет */
-    border-color: #10b981;
-    border-radius: 0.375rem;
-    justify-content: center;
-    margin: 0.25rem;
-    width: calc(100% - 0.5rem);
-}
-
-.dropdownItem.logoutButtonFull:hover {
-    background-color: #059669;
-    /* Темно-зеленый при наведении */
-}
-
-
-/* Prompt Tab Styles */
-.promptContainer {
-    margin-top: 1.5rem;
-    max-width: 800px;
-}
-
-.promptHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.5rem;
-}
-
-.promptLabel {
-    font-weight: 500;
-    color: var(--text-primary);
-}
-
-.promptInput {
-    width: 100%;
-    min-height: 200px;
-    padding: 1rem;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    resize: vertical;
-    font-family: inherit;
-    background-color: var(--background);
-    color: var(--text-primary);
-}
-
-.promptInput:disabled {
-    background-color: var(--background-secondary);
-    cursor: not-allowed;
-    opacity: 0.8;
-}
-
-.promptHint {
-    margin-top: 0.5rem;
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-}
-
-.editButton,
-.saveButton {
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    font-weight: 500;
-    cursor: pointer;
-}
-
-.editButton {
-    background-color: var(--accent);
-    color: white;
-    border: none;
-}
-
-.editButton:hover {
-    background-color: var(--accent-hover);
-}
-
-.saveButton {
-    background-color: var(--success);
-    color: white;
-    border: none;
-}
-
-.saveButton:hover {
-    background-color: var(--success-hover);
-}
-
-/* Добавьте эти стили в ваш styles.module.css */
-
-.promptContainer {
-    margin-top: 1.5rem;
-    max-width: 800px;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.promptInput {
-    width: 100%;
-    min-height: 200px;
-    padding: 1rem;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    resize: vertical;
-    font-family: inherit;
-    background-color: var(--background);
-    color: var(--text-primary);
-    transition: all 0.2s ease;
-}
-
-/* Стили для активного поля */
-.promptInput:not(:disabled) {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
-    background-color: var(--background);
-    width: 90%;
-}
-
-/* Стили для disabled состояния */
-.promptInput:disabled {
-    background-color: #f5f5f5;
-    border-color: #e0e0e0;
-    color: #666;
-    cursor: not-allowed;
-    position: relative;
-    width: 90%;
-}
-
-/* Эффект "заблокированности" */
-.promptInput:disabled::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: repeating-linear-gradient(-45deg,
-            transparent,
-            transparent 5px,
-            rgba(255, 255, 255, 0.5) 5px,
-            rgba(255, 255, 255, 0.5) 10px);
-    opacity: 0.3;
-    pointer-events: none;
-}
-
-.promptHint {
-    margin-top: 0.5rem;
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-}
-
-/* Стили для кнопки (используем существующий .uploadButton) */
-.uploadButton {
-    align-self: flex-start;
-    padding: 0.5rem 1.5rem;
-}
-
-/* Дополнительные стили для подсказки в disabled состоянии */
-.promptDisabledHint {
-    color: #999;
-    font-style: italic;
-}
-
-/* Трехколоночный интерфейс для вкладки Prompt */
+/* Промпт */
 .promptTabContainer {
     display: flex;
-    gap: 1.5rem;
-    margin-top: 1.5rem;
-}
-
-.promptColumn,
-.settingsColumn,
-.testingColumn {
-    flex: 1;
-    background-color: white;
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    gap: 2rem;
 }
 
 .promptColumn {
-    flex: 2;
-}
-
-.settingsColumn {
     flex: 1;
 }
 
-.testingColumn {
-    flex: 1.5;
-}
-
-/* Стили для чата тестирования */
-.chatWindow {
-    height: 400px;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.5rem;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    overflow-y: auto;
-    background-color: #f9fafb;
-}
-
-.chatMessage {
-    margin-bottom: 0.75rem;
-    padding: 0.5rem;
-    border-radius: 0.375rem;
-    background-color: white;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-.emptyChatHint {
+.promptHint {
     color: #6b7280;
-    text-align: center;
-    margin-top: 50%;
-    transform: translateY(-50%);
+    margin-bottom: 1rem;
 }
 
-.chatInputContainer {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.chatInput {
-    flex: 1;
-    padding: 0.5rem 1rem;
+.promptInput {
+    width: 90%;
+    min-height: 200px;
+    padding: 1rem;
     border: 1px solid #e5e7eb;
     border-radius: 0.375rem;
+    resize: vertical;
+    font-family: inherit;
+    margin-bottom: 1rem;
+    outline: none;
 }
 
-.sendButton {
+.promptInput:focus {
+    border-color: #10b981;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+
+.promptDisabled {
+    background-color: #f9fafb;
+    cursor: not-allowed;
+}
+
+/* Аналитика */
+.analyticsTabContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.analyticsHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.exportButton {
+    display: flex;
+    align-items: center;
     padding: 0.5rem 1rem;
     background-color: #10b981;
     color: white;
     border: none;
     border-radius: 0.375rem;
     cursor: pointer;
+    transition: background-color 0.2s;
 }
 
-.sendButton:hover {
+.exportButton:hover {
     background-color: #059669;
 }
 
-/* Стили для настроек */
-.settingItem {
-    margin-bottom: 1.5rem;
+.exportButton:active {
+    border-color: #10b981;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
 }
 
-.settingItem label {
-    display: block;
-    margin-bottom: 0.5rem;
+.analyticsGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.analyticsFilters {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.filterGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.filterLabel {
+    font-size: 0.875rem;
+    color: #6b7280;
+    outline: none;
+}
+
+.filterSelect,
+.filterInput {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    outline: none;
+}
+
+.filterSelect:hover {
+    border-color: #adadad;
+}
+
+.filterSelect:focus {
+    border-color: #10b981;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+
+.filterInput:focus {
+    border-color: #10b981;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+
+.filterInput {
+    border-color: #adadad;
+}
+
+.filterSelect {
+    min-width: 120px;
+    outline: none;
+}
+
+.analyticsTableContainer {
+    overflow-x: auto;
+}
+
+.analyticsTable {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.analyticsTable th,
+.analyticsTable td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.analyticsTable th {
     font-weight: 500;
+    color: #6b7280;
+    background-color: #f9fafb;
+}
+
+.analyticsTable tr:hover {
+    background-color: #f3f4f6;
+}
+
+.sessionOutcome {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    text-transform: capitalize;
+}
+
+.analyticsStats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}
+
+.statCard {
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.statCard h4 {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-bottom: 0.5rem;
+}
+
+.statCard p {
+    font-size: 1.5rem;
+    font-weight: 600;
     color: #1f2937;
 }
 
-.settingSelect {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.375rem;
+/* Адаптивность */
+@media (max-width: 768px) {
+    .sideMenu {
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        z-index: 1000;
+        transform: translateX(0);
+        transition: transform 0.3s ease;
+    }
+
+    .sideMenu.collapsed {
+        transform: translateX(-100%);
+    }
+
+    .mainContent {
+        margin-left: 0 !important;
+    }
+
+    .mobileMenuToggle {
+        display: block;
+        background: none;
+        border: none;
+        color: #374151;
+        cursor: pointer;
+        padding: 5px;
+        margin-right: 15px;
+    }
+
+    .analyticsFilters {
+        flex-direction: column;
+    }
+
+    .analyticsStats {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
-.knowledgeSources {
-    border: 1px solid #e5e7eb;
-    border-radius: 0.375rem;
-    padding: 0.5rem;
-    max-height: 200px;
-    overflow-y: auto;
-}
-
-.sourceItem {
-    display: flex;
-    align-items: center;
-    padding: 0.5rem;
-}
-
-.sourceItem input {
-    margin-right: 0.5rem;
+@media (max-width: 480px) {
+    .analyticsStats {
+        grid-template-columns: 1fr;
+    }
 }

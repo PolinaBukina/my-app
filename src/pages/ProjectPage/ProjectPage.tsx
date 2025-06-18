@@ -1,681 +1,7 @@
-// import React, { useState, useRef, useCallback } from 'react';
-// import { useNavigate } from 'react-router-dom';
-// import { Database, Menu, ChevronRight, Globe, LogOut, ChevronDown, Upload, Download, Trash2, Eye, ChevronLeft, X } from 'lucide-react';
-// import styles from './styles.module.css';
-
-// interface KnowledgeBase {
-//     id: string;
-//     name: string;
-//     date: string;
-//     size: string;
-// }
-
-// const ProjectPage: React.FC = () => {
-//     const [activeTab, setActiveTab] = useState<'knowledge' | 'settings' | 'stats'>('knowledge');
-//     const [showUploadModal, setShowUploadModal] = useState(false);
-//     const [dragActive, setDragActive] = useState(false);
-//     const [uploadProgress, setUploadProgress] = useState(0);
-//     const [knowledgeBases, setKnowledgeBases] = useState<KnowledgeBase[]>([
-//         { id: '1', name: 'Техническая документация', date: '15.05.2025', size: '2.4 MB' },
-//         { id: '2', name: 'FAQ продукта', date: '10.05.2025', size: '1.1 MB' },
-//         { id: '3', name: 'История поддержки', date: '05.05.2025', size: '3.7 MB' },
-//     ]);
-//     const navigate = useNavigate();
-//     const fileInputRef = useRef<HTMLInputElement>(null);
-
-//     const handleDelete = async (id: string) => {
-//         try {
-//             // Сначала удаляем файл на сервере
-//             await fetch(`http://localhost:3000/api/files/${id}`, {
-//                 method: 'DELETE',
-//                 headers: {
-//                     'Authorization': `Bearer ${localStorage.getItem('token') || sessionStorage.getItem('token')}`
-//                 }
-//             });
-
-//             // Затем удаляем из состояния
-//             setKnowledgeBases(prev => prev.filter(base => base.id !== id));
-//         } catch (error) {
-//             console.error('Ошибка удаления:', error);
-//         }
-//     };
-
-//     const handleDownload = (id: string) => {
-//         console.log('Скачивание базы знаний:', id);
-//     };
-
-//     const handlePreview = (id: string) => {
-//         console.log('Предпросмотр базы знаний:', id);
-//     };
-
-//     const handleBackToProjects = () => {
-//         navigate('/dashboard');
-//     };
-
-//     // Drag and Drop handlers
-//     const handleDrag = useCallback((e: React.DragEvent) => {
-//         e.preventDefault();
-//         e.stopPropagation();
-//         if (e.type === 'dragenter' || e.type === 'dragover') {
-//             setDragActive(true);
-//         } else if (e.type === 'dragleave') {
-//             setDragActive(false);
-//         }
-//     }, []);
-
-//     const handleDrop = useCallback((e: React.DragEvent) => {
-//         e.preventDefault();
-//         e.stopPropagation();
-//         setDragActive(false);
-//         if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-//             // Handle the files
-//             const file = e.dataTransfer.files[0];
-//             handleFileUpload(file);
-//         }
-//     }, []);
-
-//     const handleFileUpload = async (file: File) => {
-//         // try {
-//         //     setUploadProgress(10);
-
-//         //     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-//         //     if (!token) throw new Error('Требуется авторизация');
-
-//         //     const formData = new FormData();
-//         //     formData.append('file', file);
-//         //     formData.append('name', file.name.replace(/\.[^/.]+$/, ""));
-//         //     formData.append('description', `База знаний ${file.name}`);
-
-//         //     const response = await fetch('http://localhost:3000/api/files/upload', {
-//         //         method: 'POST',
-//         //         headers: {
-//         //             'Authorization': `Bearer ${token}`
-//         //         },
-//         //         body: formData
-//         //     });
-
-//         //     setUploadProgress(70);
-
-//         //     if (!response.ok) {
-//         //         const errorData = await response.json();
-//         //         throw new Error(errorData.error || 'Ошибка сервера');
-//         //     }
-
-//         //     const data = await response.json();
-//         //     setUploadProgress(100);
-
-//         //     // Обновляем список файлов
-//         //     const newBase: KnowledgeBase = {
-//         //         id: data.fileId.toString(), // Убедимся, что ID строка
-//         //         name: data.filename,
-//         //         date: new Date().toLocaleDateString(),
-//         //         size: data.size
-//         //     };
-
-//         //     setKnowledgeBases(prev => [...prev, newBase]);
-
-//         //     setTimeout(() => {
-//         //         setShowUploadModal(false);
-//         //         setUploadProgress(0);
-//         //     }, 500);
-//         // } catch (error) {
-//         //     console.error('Ошибка загрузки:', error);
-//         //     setUploadProgress(0);
-//         //     alert(`Ошибка: ${error instanceof Error ? error.message : 'Неизвестная ошибка'}`);
-//         // }
-//         console.log('пока не работает загрузка файлов')
-//     };
-
-//     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-//         if (e.target.files && e.target.files[0]) {
-//             setUploadProgress(0); // Сбрасываем прогресс
-//             handleFileUpload(e.target.files[0]);
-//         }
-//         // Сбрасываем значение input, чтобы можно было загрузить тот же файл снова
-//         if (e.target) {
-//             e.target.value = '';
-//         }
-//     };
-
-//     return (
-//         <div className={styles.container}>
-//             <nav className={styles.navbar}>
-//                 <div className={styles.navContainer}>
-//                     <div className={styles.navContent}>
-//                         <div className={styles.flex}>
-//                             <button
-//                                 className={styles.backButton}
-//                                 onClick={handleBackToProjects}
-//                             >
-//                                 <ChevronLeft className="h-5 w-5 mr-1" />
-//                                 Назад к проектам
-//                             </button>
-
-//                             <div className={styles.breadcrumbs}>
-//                                 <span>Проекты</span>
-//                                 <ChevronRight className="h-4 w-4 mx-2" />
-//                                 <span className={styles.breadcrumbActive}>МосПолитех</span>
-//                             </div>
-//                         </div>
-
-//                         <div className={styles.navActions}>
-//                             {/* Кнопки языка, меню и выхода как в Dashboard */}
-//                         </div>
-//                     </div>
-//                 </div>
-//             </nav>
-
-//             <main className={styles.mainContainer}>
-//                 <h1 className={styles.projectTitle}>МосПолитех</h1>
-//                 <p className={styles.projectDescription}>AI-ассистент по работе с текстовыми запросами пользователей</p>
-
-//                 <div className={styles.tabs}>
-//                     <button
-//                         className={`${styles.tab} ${activeTab === 'knowledge' ? styles.tabActive : ''}`}
-//                         onClick={() => setActiveTab('knowledge')}
-//                     >
-//                         Базы знаний
-//                     </button>
-//                     <button
-//                         className={`${styles.tab} ${activeTab === 'settings' ? styles.tabActive : ''}`}
-//                         onClick={() => setActiveTab('settings')}
-//                     >
-//                         Настройки
-//                     </button>
-//                 </div>
-
-//                 {activeTab === 'knowledge' && (
-//                     <div className={styles.tabContent}>
-//                         <div className={styles.knowledgeBases}>
-//                             <h3 className={styles.sectionTitle}>Загруженные базы знаний</h3>
-
-//                             <div className={styles.knowledgeList}>
-//                                 {knowledgeBases.map(base => (
-//                                     <div key={base.id} className={styles.knowledgeItem}>
-//                                         <div className={styles.knowledgeInfo}>
-//                                             <Database className="h-5 w-5 text-green-500 mr-3" />
-//                                             <div>
-//                                                 <h4 className={styles.knowledgeName}>{base.name}</h4>
-//                                                 <div className={styles.knowledgeMeta}>
-//                                                     <span>{base.date}</span>
-//                                                     <span className={styles.metaSeparator}>•</span>
-//                                                     <span>{base.size}</span>
-//                                                 </div>
-//                                             </div>
-//                                         </div>
-
-//                                         <div className={styles.knowledgeActions}>
-//                                             <button
-//                                                 className={styles.actionButton}
-//                                                 onClick={() => handlePreview(base.id)}
-//                                                 title="Предпросмотр"
-//                                             >
-//                                                 <Eye className="h-4 w-4" />
-//                                             </button>
-//                                             <button
-//                                                 className={styles.actionButton}
-//                                                 onClick={() => handleDownload(base.id)}
-//                                                 title="Скачать"
-//                                             >
-//                                                 <Download className="h-4 w-4" />
-//                                             </button>
-//                                             <button
-//                                                 className={`${styles.actionButton} ${styles.deleteButton}`}
-//                                                 onClick={() => handleDelete(base.id)}
-//                                                 title="Удалить"
-//                                             >
-//                                                 <Trash2 className="h-4 w-4" />
-//                                             </button>
-//                                         </div>
-//                                     </div>
-//                                 ))}
-//                             </div>
-
-//                             <button
-//                                 className={styles.uploadButton}
-//                                 onClick={() => setShowUploadModal(true)}
-//                             >
-//                                 <Upload className="h-5 w-5 mr-2" />
-//                                 Загрузить новую базу
-//                             </button>
-//                         </div>
-//                     </div>
-//                 )}
-
-//                 {activeTab === 'settings' && (
-//                     <div className={styles.tabContent}>
-//                         <h3 className={styles.sectionTitle}>Настройки проекта</h3>
-//                     </div>
-//                 )}
-
-//                 {activeTab === 'stats' && (
-//                     <div className={styles.tabContent}>
-//                         <h3 className={styles.sectionTitle}>Подробная статистика</h3>
-//                     </div>
-//                 )}
-//             </main>
-
-//             {/* Модальное окно загрузки с Drag and Drop */}
-//             {showUploadModal && (
-//                 <div className={styles.modalOverlay}>
-//                     <div className={styles.modal}>
-//                         <div className={styles.modalHeader}>
-//                             <h3 className={styles.modalTitle}>Загрузка новой базы знаний</h3>
-//                             <button onClick={() => setShowUploadModal(false)} className={styles.closeButton}>
-//                                 <X className="h-6 w-6" />
-//                             </button>
-//                         </div>
-
-//                         {uploadProgress > 0 && (
-//                             <div className={styles.progressBarContainer}>
-//                                 <div
-//                                     className={styles.progressBar}
-//                                     style={{ width: `${uploadProgress}%` }}
-//                                 >
-//                                     {uploadProgress}%
-//                                 </div>
-//                             </div>
-//                         )}
-
-//                         <div
-//                             className={`${styles.uploadArea} ${dragActive ? styles.dragActive : ''}`}
-//                             onDragEnter={handleDrag}
-//                             onDragLeave={handleDrag}
-//                             onDragOver={handleDrag}
-//                             onDrop={handleDrop}
-//                             onClick={() => fileInputRef.current?.click()}
-//                         >
-//                             <Upload className="h-12 w-12 text-gray-400 mb-2" />
-//                             <p>Перетащите файлы сюда или нажмите для выбора</p>
-//                             <input
-//                                 type="file"
-//                                 ref={fileInputRef}
-//                                 className={styles.fileInput}
-//                                 onChange={handleFileChange}
-//                                 accept=".pdf,.txt,.docx,.xlsx"
-//                             />
-//                             <p className={styles.fileTypesHint}>Поддерживаемые форматы: PDF, TXT, DOCX, XLSX</p>
-//                         </div>
-
-//                         <div className={styles.modalActions}>
-//                             <button
-//                                 className={styles.cancelButton}
-//                                 onClick={() => setShowUploadModal(false)}
-//                             >
-//                                 Отмена
-//                             </button>
-//                             {/* <button
-//                                 className={styles.confirmButton}
-//                                 disabled={!fileInputRef.current?.value}
-//                             >
-//                                 Загрузить */}
-//                             <button
-//                                 className={styles.confirmButton}
-//                                 disabled={uploadProgress > 0} // Блокируем кнопку во время загрузки
-//                                 onClick={() => fileInputRef.current?.click()}
-//                             >
-//                                 {uploadProgress > 0 ? 'Загрузка...' : 'Выбрать файл'}
-//                             </button>
-//                         </div>
-//                     </div>
-//                 </div>
-//             )
-//             }
-//         </div >
-//     );
-// };
-
-// export default ProjectPage;
-
-
-
-// import React, { useState, useRef, useCallback } from 'react';
-// import { useNavigate } from 'react-router-dom';
-// import { Database, Menu, ChevronRight, Globe, LogOut, ChevronDown, Upload, Download, Trash2, Eye, ChevronLeft, X, User } from 'lucide-react';
-// import styles from './styles.module.css';
-// import { useAuthContext } from '../../helpers/authContext';
-
-// interface KnowledgeBase {
-//     id: string;
-//     name: string;
-//     date: string;
-//     size: string;
-// }
-
-// const ProjectPage: React.FC = () => {
-//     const [activeTab, setActiveTab] = useState<'knowledge' | 'settings' | 'prompt'>('knowledge');
-//     const [showUploadModal, setShowUploadModal] = useState(false);
-//     const [dragActive, setDragActive] = useState(false);
-//     const [uploadProgress, setUploadProgress] = useState(0);
-//     const [knowledgeBases, setKnowledgeBases] = useState<KnowledgeBase[]>([
-//         { id: '1', name: 'Техническая документация', date: '15.05.2025', size: '2.4 MB' },
-//         { id: '2', name: 'FAQ продукта', date: '10.05.2025', size: '1.1 MB' },
-//         { id: '3', name: 'История поддержки', date: '05.05.2025', size: '3.7 MB' },
-//     ]);
-//     const navigate = useNavigate();
-//     const fileInputRef = useRef<HTMLInputElement>(null);
-
-//     const [isEditing, setIsEditing] = useState(false);
-//     const [promptText, setPromptText] = useState('Текущий промпт...'); // Замените на актуальный промпт из API
-
-//     // Получаем имя пользователя из контекста авторизации
-//     const { state } = useAuthContext();
-//     const username = state.user?.username || 'Пользователь';
-
-//     const handleDelete = async (id: string) => {
-//         try {
-//             await fetch(`http://localhost:3000/api/files/${id}`, {
-//                 method: 'DELETE',
-//                 headers: {
-//                     'Authorization': `Bearer ${localStorage.getItem('token') || sessionStorage.getItem('token')}`
-//                 }
-//             });
-
-//             setKnowledgeBases(prev => prev.filter(base => base.id !== id));
-//         } catch (error) {
-//             console.error('Ошибка удаления:', error);
-//         }
-//     };
-
-//     const handleDownload = (id: string) => {
-//         console.log('Скачивание базы знаний:', id);
-//     };
-
-//     const handlePreview = (id: string) => {
-//         console.log('Предпросмотр базы знаний:', id);
-//     };
-
-//     const handleBackToProjects = () => {
-//         navigate('/dashboard');
-//     };
-
-//     const handleLogout = () => {
-//         navigate('/');
-//     };
-
-//     const handleDrag = useCallback((e: React.DragEvent) => {
-//         e.preventDefault();
-//         e.stopPropagation();
-//         if (e.type === 'dragenter' || e.type === 'dragover') {
-//             setDragActive(true);
-//         } else if (e.type === 'dragleave') {
-//             setDragActive(false);
-//         }
-//     }, []);
-
-//     const handleDrop = useCallback((e: React.DragEvent) => {
-//         e.preventDefault();
-//         e.stopPropagation();
-//         setDragActive(false);
-//         if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-//             const file = e.dataTransfer.files[0];
-//             handleFileUpload(file);
-//         }
-//     }, []);
-
-//     const handleFileUpload = async (file: File) => {
-//         console.log('пока не работает загрузка файлов')
-//     };
-
-//     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-//         if (e.target.files && e.target.files[0]) {
-//             setUploadProgress(0);
-//             handleFileUpload(e.target.files[0]);
-//         }
-//         if (e.target) {
-//             e.target.value = '';
-//         }
-//     };
-
-//     const handleSavePrompt = async () => {
-//         try {
-//             // Здесь логика сохранения промпта (API-запрос)
-//             console.log('Сохранён промпт:', promptText);
-//             setIsEditing(false);
-//         } catch (error) {
-//             console.error('Ошибка сохранения:', error);
-//         }
-//     };
-
-//     return (
-//         <div className={styles.container}>
-//             <nav className={styles.navbar}>
-//                 <div className={styles.navContainer}>
-//                     <div className={styles.navContent}>
-//                         <div className={styles.flex}>
-//                             <button
-//                                 className={styles.backButton}
-//                                 onClick={handleBackToProjects}
-//                             >
-//                                 <ChevronLeft className="h-5 w-5 mr-1" />
-//                                 Назад к проектам
-//                             </button>
-
-//                             <div className={styles.breadcrumbs}>
-//                                 <span>Проекты</span>
-//                                 <ChevronRight className="h-4 w-4 mx-2" />
-//                                 <span className={styles.breadcrumbActive}>МосПолитех</span>
-//                             </div>
-//                         </div>
-
-//                         <div className={styles.navActions}>
-//                             {/* Блок пользователя */}
-//                             <div className={styles.userDropdown}>
-//                                 <div className={styles.userInfo}>
-//                                     <User className="h-5 w-5 mr-2" />
-//                                     <span>{username}</span>
-//                                     <ChevronDown className="h-4 w-4 ml-1" />
-//                                 </div>
-//                                 <div className={styles.dropdownMenu}>
-//                                     <button
-//                                         className={styles.dropdownItem}
-//                                         onClick={handleLogout}
-//                                     >
-//                                         <LogOut className="h-4 w-4 mr-2" />
-//                                         Выйти
-//                                     </button>
-//                                 </div>
-//                             </div>
-//                         </div>
-//                     </div>
-//                 </div>
-//             </nav>
-
-//             <main className={styles.mainContainer}>
-//                 <h1 className={styles.projectTitle}>МосПолитех</h1>
-//                 <p className={styles.projectDescription}>AI-ассистент по работе с текстовыми запросами пользователей</p>
-
-//                 <div className={styles.tabs}>
-//                     <button
-//                         className={`${styles.tab} ${activeTab === 'knowledge' ? styles.tabActive : ''}`}
-//                         onClick={() => setActiveTab('knowledge')}
-//                     >
-//                         Базы знаний
-//                     </button>
-//                     <button
-//                         className={`${styles.tab} ${activeTab === 'settings' ? styles.tabActive : ''}`}
-//                         onClick={() => setActiveTab('settings')}
-//                     >
-//                         Настройки
-//                     </button>
-//                     <button
-//                         className={`${styles.tab} ${activeTab === 'prompt' ? styles.tabActive : ''}`}
-//                         onClick={() => setActiveTab('prompt')}
-//                     >
-//                         Промпт
-//                     </button>
-//                 </div>
-
-//                 {activeTab === 'knowledge' && (
-//                     <div className={styles.tabContent}>
-//                         <div className={styles.knowledgeBases}>
-//                             <h3 className={styles.sectionTitle}>Загруженные базы знаний</h3>
-
-//                             <div className={styles.knowledgeList}>
-//                                 {knowledgeBases.map(base => (
-//                                     <div key={base.id} className={styles.knowledgeItem}>
-//                                         <div className={styles.knowledgeInfo}>
-//                                             <Database className="h-5 w-5 text-green-500 mr-3" />
-//                                             <div>
-//                                                 <h4 className={styles.knowledgeName}>{base.name}</h4>
-//                                                 <div className={styles.knowledgeMeta}>
-//                                                     <span>{base.date}</span>
-//                                                     <span className={styles.metaSeparator}>•</span>
-//                                                     <span>{base.size}</span>
-//                                                 </div>
-//                                             </div>
-//                                         </div>
-
-//                                         <div className={styles.knowledgeActions}>
-//                                             <button
-//                                                 className={styles.actionButton}
-//                                                 onClick={() => handlePreview(base.id)}
-//                                                 title="Предпросмотр"
-//                                             >
-//                                                 <Eye className="h-4 w-4" />
-//                                             </button>
-//                                             <button
-//                                                 className={styles.actionButton}
-//                                                 onClick={() => handleDownload(base.id)}
-//                                                 title="Скачать"
-//                                             >
-//                                                 <Download className="h-4 w-4" />
-//                                             </button>
-//                                             <button
-//                                                 className={`${styles.actionButton} ${styles.deleteButton}`}
-//                                                 onClick={() => handleDelete(base.id)}
-//                                                 title="Удалить"
-//                                             >
-//                                                 <Trash2 className="h-4 w-4" />
-//                                             </button>
-//                                         </div>
-//                                     </div>
-//                                 ))}
-//                             </div>
-
-//                             <button
-//                                 className={styles.uploadButton}
-//                                 onClick={() => setShowUploadModal(true)}
-//                             >
-//                                 <Upload className="h-5 w-5 mr-2" />
-//                                 Загрузить новую базу
-//                             </button>
-//                         </div>
-//                     </div>
-//                 )}
-
-//                 {activeTab === 'settings' && (
-//                     <div className={styles.tabContent}>
-//                         <h3 className={styles.sectionTitle}>Настройки проекта</h3>
-//                     </div>
-//                 )}
-
-//                 {activeTab === 'prompt' && (
-//                     <div className={styles.tabContent}>
-//                         <h3 className={styles.sectionTitle}>Настройка промпта</h3>
-
-//                         <div className={styles.promptContainer}>
-//                             {/* <div className={styles.promptHeader}> */}
-//                             <p className={styles.promptHint}>
-//                                 {!isEditing
-//                                     ? "Используйте кнопку 'Редактировать' для изменения промпта."
-//                                     : "Начните вводить промпт, чтобы задать поведение бота."
-//                                 }
-//                             </p>
-//                             <textarea
-//                                 className={`${styles.promptInput} ${!isEditing && promptText ? styles.promptDisabled : ''}`}
-//                                 value={promptText}
-//                                 onChange={(e) => setPromptText(e.target.value)}
-//                                 disabled={!isEditing && !!promptText} // Disabled только если есть текст и не редактируется
-//                                 placeholder="Введите системный промпт для AI-ассистента..."
-//                             />
-//                             {/* </div> */}
-//                             {promptText && ( // Кнопки только если есть текст
-//                                 <button
-//                                     className={styles.uploadButton}
-//                                     onClick={isEditing ? handleSavePrompt : () => setIsEditing(true)}
-//                                 >
-//                                     {isEditing ? 'Сохранить' : 'Редактировать'}
-//                                 </button>
-//                             )}
-
-//                         </div>
-//                     </div>
-//                 )}
-
-//                 {showUploadModal && (
-//                     <div className={styles.modalOverlay}>
-//                         <div className={styles.modal}>
-//                             <div className={styles.modalHeader}>
-//                                 <h3 className={styles.modalTitle}>Загрузка новой базы знаний</h3>
-//                                 <button onClick={() => setShowUploadModal(false)} className={styles.closeButton}>
-//                                     <X className="h-6 w-6" />
-//                                 </button>
-//                             </div>
-
-//                             {uploadProgress > 0 && (
-//                                 <div className={styles.progressBarContainer}>
-//                                     <div
-//                                         className={styles.progressBar}
-//                                         style={{ width: `${uploadProgress}%` }}
-//                                     >
-//                                         {uploadProgress}%
-//                                     </div>
-//                                 </div>
-//                             )}
-
-//                             <div
-//                                 className={`${styles.uploadArea} ${dragActive ? styles.dragActive : ''}`}
-//                                 onDragEnter={handleDrag}
-//                                 onDragLeave={handleDrag}
-//                                 onDragOver={handleDrag}
-//                                 onDrop={handleDrop}
-//                                 onClick={() => fileInputRef.current?.click()}
-//                             >
-//                                 <Upload className="h-12 w-12 text-gray-400 mb-2" />
-//                                 <p>Перетащите файлы сюда или нажмите для выбора</p>
-//                                 <input
-//                                     type="file"
-//                                     ref={fileInputRef}
-//                                     className={styles.fileInput}
-//                                     onChange={handleFileChange}
-//                                     accept=".pdf,.txt,.docx,.xlsx"
-//                                 />
-//                                 <p className={styles.fileTypesHint}>Поддерживаемые форматы: PDF, TXT, DOCX, XLSX</p>
-//                             </div>
-
-//                             <div className={styles.modalActions}>
-//                                 <button
-//                                     className={styles.cancelButton}
-//                                     onClick={() => setShowUploadModal(false)}
-//                                 >
-//                                     Отмена
-//                                 </button>
-//                                 <button
-//                                     className={styles.confirmButton}
-//                                     disabled={uploadProgress > 0}
-//                                     onClick={() => fileInputRef.current?.click()}
-//                                 >
-//                                     {uploadProgress > 0 ? 'Загрузка...' : 'Выбрать файл'}
-//                                 </button>
-//                             </div>
-//                         </div>
-//                     </div>
-//                 )}
-//             </main>
-//         </div>
-//     );
-// };
-
-// export default ProjectPage;
-
-
-
-
-
 import React, { useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Database, Menu, ChevronRight, Globe, LogOut, ChevronDown, Upload, Download, Trash2, Eye, ChevronLeft, X, User } from 'lucide-react';
+import { Database, Menu, ChevronRight, Globe, LogOut, ChevronDown, Upload, Download, Trash2, Eye, ChevronLeft, X, User, BarChart2, ArrowLeft } from 'lucide-react';
+import * as XLSX from 'xlsx';
 import styles from './styles.module.css';
 import { useAuthContext } from '../../helpers/authContext';
 
@@ -686,8 +12,26 @@ interface KnowledgeBase {
     size: string;
 }
 
+interface AnalyticsSession {
+    session_uuid: string;
+    time_appeal: string;
+    source_appeal: string;
+    user_id: string;
+    duration_seconds: number;
+    number_requests: number;
+    classifier: string;
+    session_outcome: string;
+    summary: string;
+    dialogue_transcription: string;
+    avg_response_time_seconds: number;
+    percentage_confidence: number;
+    own_assessment: number;
+    recommendation_BZ: string;
+    grade_NPS: number | string;
+}
+
 const ProjectPage: React.FC = () => {
-    const [activeTab, setActiveTab] = useState<'knowledge' | 'settings' | 'prompt'>('knowledge');
+    const [activeTab, setActiveTab] = useState<'knowledge' | 'prompt' | 'analytics'>('knowledge');
     const [showUploadModal, setShowUploadModal] = useState(false);
     const [dragActive, setDragActive] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
@@ -703,6 +47,110 @@ const ProjectPage: React.FC = () => {
     const [promptText, setPromptText] = useState('Текущий промпт...');
     const [testMessage, setTestMessage] = useState('');
     const [testResponses, setTestResponses] = useState<string[]>([]);
+    const [isMenuCollapsed, setIsMenuCollapsed] = useState(false);
+
+    const [filters, setFilters] = useState({ // для аналитики
+        source: 'all',
+        outcome: 'all',
+        date: ''
+    });
+
+    const [analyticsData, setAnalyticsData] = useState<AnalyticsSession[]>([
+        {
+            "session_uuid": "550e8400-e29b-41d4-a716-446655440001",
+            "time_appeal": "08-06-2025 14:23:17",
+            "source_appeal": "telegram",
+            "user_id": "@student_ivan",
+            "duration_seconds": 720,
+            "number_requests": 5,
+            "classifier": "поступление в магистратуру",
+            "session_outcome": "завершен_успешно",
+            "summary": "Консультация по поступлению в магистратуру, вопросы о документах и сроках подачи",
+            "dialogue_transcription": "assistant: Здравствуйте! Я AI-ассистент Московского политехнического университета. Чем могу помочь?\nhuman: Привет! Хочу поступить к вам в магистратуру по направлению \"Информационные системы и технологии\". Какие документы нужны?\nassistant: Рад помочь с поступлением в магистратуру! Для поступления вам потребуются следующие документы: документ, удостоверяющий личность (паспорт), диплом о высшем образовании с приложением, СНИЛС (при наличии), фотография, документы, подтверждающие индивидуальные достижения (при наличии)...\nhuman: А какие сроки подачи документов?\nassistant: Документы на бюджетную основу принимаются до 13 августа 2025 года до 18:00, на платную основу — до 29 августа 2025 года...\nhuman: Можно подать онлайн?\nassistant: Конечно! Доступно несколько способов подачи: онлайн через личный кабинет абитуриента на сайте lk.mospolytech.ru, через портал Госуслуги...\nhuman: Понятно, спасибо!\nassistant: Пожалуйста! Рад был помочь. Желаю успехов в поступлении в Московский Политех!",
+            "avg_response_time_seconds": 1.54,
+            "percentage_confidence": 98,
+            "own_assessment": 5,
+            "recommendation_BZ": "Нет необходимости в расширении БЗ - полная информация предоставлена",
+            "grade_NPS": 5
+        },
+        {
+            "session_uuid": "660f9511-f30c-52e5-b827-557766551102",
+            "time_appeal": "08-06-2025 16:45:32",
+            "source_appeal": "website",
+            "user_id": "anonymous_user_7834",
+            "duration_seconds": 180,
+            "number_requests": 3,
+            "classifier": "вопросы по общежитию",
+            "session_outcome": "передан_оператору",
+            "summary": "Вопрос о содержании домашних животных в общежитии - информация отсутствует в БЗ",
+            "dialogue_transcription": "assistant: Здравствуйте! Я AI-ассистент Московского политехнического университета. Чем могу помочь?\nhuman: Можно ли держать кота в общежитии?\nassistant: Спасибо за интересный вопрос! К сожалению, в моей текущей базе знаний нет конкретной информации о правилах содержания домашних животных в общежитиях МосПолитеха...\nhuman: Тогда передайте оператору\nassistant: Конечно! Передаю ваш вопрос о правилах содержания домашних животных в общежитии специалисту...",
+            "avg_response_time_seconds": 2.15,
+            "percentage_confidence": 15,
+            "own_assessment": 3,
+            "recommendation_BZ": "РЕКОМЕНДУЕТСЯ добавить информацию о правилах содержания домашних животных в общежитиях",
+            "grade_NPS": "none"
+        },
+        {
+            "session_uuid": "770a0622-041d-63f6-c938-668877662203",
+            "time_appeal": "08-06-2025 11:12:08",
+            "source_appeal": "whatsapp",
+            "user_id": "+79161234567",
+            "duration_seconds": 45,
+            "number_requests": 2,
+            "classifier": "нетематический_запрос",
+            "session_outcome": "прерван_пользователем",
+            "summary": "Нетематический запрос - вопрос о рецепте борща, корректное перенаправление на тематику университета",
+            "dialogue_transcription": "assistant: Здравствуйте! Я AI-ассистент Московского политехнического университета. Чем могу помочь?\nhuman: Как приготовить борщ?\nassistant: Здравствуйте! Я - AI-ассистент Московского политехнического университета, и консультирую только по вопросам, связанным с нашим университетом...\nhuman: Понятно, тогда пока",
+            "avg_response_time_seconds": 1.23,
+            "percentage_confidence": 100,
+            "own_assessment": 4,
+            "recommendation_BZ": "Нет необходимости в расширении БЗ - корректная обработка нетематического запроса",
+            "grade_NPS": "none"
+        },
+        {
+            "session_uuid": "880b1733-152e-74g7-d049-779988773304",
+            "time_appeal": "08-06-2025 13:55:44",
+            "source_appeal": "vk",
+            "user_id": "id123456789",
+            "duration_seconds": 960,
+            "number_requests": 8,
+            "classifier": "поступление в бакалавриат",
+            "session_outcome": "завершен_успешно",
+            "summary": "Подробная консультация о поступлении в бакалавриат, общежитии, стипендиях и студенческой жизни",
+            "dialogue_transcription": "assistant: Здравствуйте! Я AI-ассистент Московского политехнического университета. Чем могу помочь?\nhuman: Привет! Хочу поступать к вам после 11 класса. Расскажите про направления\nassistant: Здравствуйте! Рад помочь с информацией о поступлении в МосПолитех!...\nhuman: А какая стипендия у вас?\nassistant: В МосПолитехе действует многоуровневая система стипендиального обеспечения...\nhuman: Есть ли общежития?\nassistant: Да, конечно! В МосПолитехе отлично развита система студенческих общежитий...\nhuman: А какие есть кружки и секции?\nassistant: В университете активно работают более 50 студенческих объединений...",
+            "avg_response_time_seconds": 1.78,
+            "percentage_confidence": 96,
+            "own_assessment": 4,
+            "recommendation_BZ": "Нет необходимости в расширении БЗ - все вопросы успешно обработаны",
+            "grade_NPS": 4
+        },
+        {
+            "session_uuid": "990c2844-263f-85h8-e15a-88aa99884405",
+            "time_appeal": "08-06-2025 20:17:29",
+            "source_appeal": "telegram",
+            "user_id": "@disappointed_student",
+            "duration_seconds": 300,
+            "number_requests": 4,
+            "classifier": "пересдача экзаменов",
+            "session_outcome": "передан_оператору",
+            "summary": "Вопрос о пересдаче экзаменов - частичная информация в БЗ, пользователь неудовлетворен ответом",
+            "dialogue_transcription": "assistant: Здравствуйте! Я AI-ассистент Московского политехнического университета. Чем могу помочь?\nhuman: Как пересдать экзамен который завалил?\nassistant: Понимаю ваше беспокойство! В МосПолитехе действует система пересдач экзаменов...\nhuman: А сколько попыток пересдачи?\nassistant: К сожалению, точной информации о количестве попыток пересдачи в моей базе знаний нет...\nhuman: Это какой-то неполный ответ\nassistant: Извините за неполноту информации. Передаю ваш вопрос специалисту для получения точного ответа...",
+            "avg_response_time_seconds": 2.45,
+            "percentage_confidence": 45,
+            "own_assessment": 2,
+            "recommendation_BZ": "РЕКОМЕНДУЕТСЯ добавить подробную информацию о процедуре и количестве попыток пересдачи экзаменов",
+            "grade_NPS": 2
+        }
+    ]);
+
+    // 2. Обновляем обработчики фильтров
+    const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFilters(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
 
     const { state } = useAuthContext();
     const username = state.user?.username || 'Пользователь';
@@ -725,7 +173,6 @@ const ProjectPage: React.FC = () => {
     const handleSendTestMessage = () => {
         if (!testMessage.trim()) return;
 
-        // Здесь будет логика отправки сообщения и получения ответа
         const mockResponse = `Ответ на: "${testMessage}"`;
         setTestResponses(prev => [...prev, `Вы: ${testMessage}`, `Бот: ${mockResponse}`]);
         setTestMessage('');
@@ -783,7 +230,6 @@ const ProjectPage: React.FC = () => {
 
     const handleSavePrompt = async () => {
         try {
-            // Здесь логика сохранения промпта (API-запрос)
             console.log('Сохранён промпт:', promptText);
             setIsEditing(false);
         } catch (error) {
@@ -791,9 +237,65 @@ const ProjectPage: React.FC = () => {
         }
     };
 
+    // 3. Функция для фильтрации данных перед экспортом
+    const getFilteredData = () => {
+        return analyticsData.filter(session => {
+            const matchesSource = filters.source === 'all' || session.source_appeal === filters.source;
+            const matchesOutcome = filters.outcome === 'all' || session.session_outcome === filters.outcome;
+            const matchesDate = !filters.date || session.time_appeal.includes(filters.date.split('-').reverse().join('-'));
+
+            return matchesSource && matchesOutcome && matchesDate;
+        });
+    };
+
+    // 4. Обновляем функцию экспорта
+    const exportToExcel = () => {
+        const filteredData = getFilteredData();
+        const worksheet = XLSX.utils.json_to_sheet(filteredData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Аналитика сессий");
+        XLSX.writeFile(workbook, "Аналитика_МосПолитех.xlsx");
+    };
+
+    const renderConfidenceBadge = (percentage: number) => {
+        let color = '';
+        if (percentage >= 80) color = 'bg-green-100 text-green-800';
+        else if (percentage >= 50) color = 'bg-blue-100 text-blue-800';
+        else if (percentage >= 20) color = 'bg-yellow-100 text-yellow-800';
+        else color = 'bg-red-100 text-red-800';
+
+        return (
+            <span className={`px-2 py-1 rounded-full text-xs font-medium ${color}`}>
+                {percentage}%
+            </span>
+        );
+    };
+
+    const renderAssessmentBadge = (assessment: number) => {
+        const colors = [
+            'bg-red-100 text-red-800',
+            'bg-orange-100 text-orange-800',
+            'bg-yellow-100 text-yellow-800',
+            'bg-blue-100 text-blue-800',
+            'bg-green-100 text-green-800'
+        ];
+
+        return (
+            <span className={`px-2 py-1 rounded-full text-xs font-medium ${colors[assessment - 1]}`}>
+                {assessment}/5
+            </span>
+        );
+    };
+
+    const toggleMenu = () => {
+        setIsMenuCollapsed(!isMenuCollapsed);
+    };
+
+    const goHome = () => navigate(-1)
+
     return (
         <div className={styles.container}>
-            <nav className={styles.navbar}>
+            {/* <nav className={styles.navbar}>
                 <div className={styles.navContainer}>
                     <div className={styles.navContent}>
                         <div className={styles.flex}>
@@ -813,7 +315,6 @@ const ProjectPage: React.FC = () => {
                         </div>
 
                         <div className={styles.navActions}>
-                            {/* Блок пользователя */}
                             <div className={styles.userDropdown}>
                                 <div className={styles.userInfo}>
                                     <User className="h-5 w-5 mr-2" />
@@ -833,7 +334,52 @@ const ProjectPage: React.FC = () => {
                         </div>
                     </div>
                 </div>
-            </nav>
+            </nav> */}
+
+            <div className={`${styles.sideMenu} ${isMenuCollapsed ? styles.collapsed : ''}`}>
+                <div className={styles.sideMenuHeader}>
+                    <div className={styles.logoContainer}>
+                        <svg width="40" height="65" viewBox="0 0 153 173" fill="none" xmlns="http://www.w3.org/2000/svg"> <path fillRule="evenodd" clipRule="evenodd" d="M7 63.5428C10.866 63.5428 14 66.6769 14 70.5428V102.314C14 106.18 10.866 109.314 7 109.314C3.13401 109.314 0 106.18 0 102.314V70.5428C0 66.6769 3.13401 63.5428 7 63.5428Z" fill="url(#paint0_linear_1_473)" /> <path fillRule="evenodd" clipRule="evenodd" d="M118.2 63.5428C122.066 63.5428 125.2 66.6769 125.2 70.5428V102.314C125.2 106.18 122.066 109.314 118.2 109.314C114.334 109.314 111.2 106.18 111.2 102.314V70.5428C111.2 66.6769 114.334 63.5428 118.2 63.5428Z" fill="url(#paint1_linear_1_473)" /> <path fillRule="evenodd" clipRule="evenodd" d="M90.3999 23.8286C94.2659 23.8286 97.3999 26.9626 97.3999 30.8286V138.057C97.3999 141.923 94.2659 145.057 90.3999 145.057C86.5339 145.057 83.3999 141.923 83.3999 138.057V30.8286C83.3999 26.9626 86.5339 23.8286 90.3999 23.8286Z" fill="url(#paint2_linear_1_473)" /> <path fillRule="evenodd" clipRule="evenodd" d="M62.6001 0C66.4661 0 69.6001 3.13401 69.6001 7V165.857C69.6001 169.723 66.4661 172.857 62.6001 172.857C58.7341 172.857 55.6001 169.723 55.6001 165.857V7C55.6001 3.13401 58.7341 0 62.6001 0Z" fill="url(#paint3_linear_1_473)" /> <path fillRule="evenodd" clipRule="evenodd" d="M34.7998 47.6571C38.6658 47.6571 41.7998 50.7911 41.7998 54.6571V118.2C41.7998 122.066 38.6658 125.2 34.7998 125.2C30.9338 125.2 27.7998 122.066 27.7998 118.2V54.6571C27.7998 50.7911 30.9338 47.6571 34.7998 47.6571Z" fill="url(#paint4_linear_1_473)" /> <path fillRule="evenodd" clipRule="evenodd" d="M146 77.4429C149.866 77.4429 153 80.5769 153 84.4429V86.4286C153 90.2946 149.866 93.4286 146 93.4286C142.134 93.4286 139 90.2946 139 86.4286V84.4429C139 80.5769 142.134 77.4429 146 77.4429Z" fill="url(#paint5_linear_1_473)" /> <defs> <linearGradient id="paint0_linear_1_473" x1="14" y1="84.8558" x2="-5.40286e-10" y2="84.8558" gradientUnits="userSpaceOnUse"> <stop offset="0.005" stopColor="#2E4F41" /> <stop offset="1" stopColor="#2AAD6B" /> </linearGradient> <linearGradient id="paint1_linear_1_473" x1="125.2" y1="84.8558" x2="111.2" y2="84.8558" gradientUnits="userSpaceOnUse"> <stop offset="0.005" stopColor="#2E4F41" /> <stop offset="1" stopColor="#2AAD6B" /> </linearGradient> <linearGradient id="paint2_linear_1_473" x1="97.3999" y1="80.2774" x2="83.3999" y2="80.2774" gradientUnits="userSpaceOnUse"> <stop offset="0.005" stopColor="#2E4F41" /> <stop offset="1" stopColor="#2AAD6B" /> </linearGradient> <linearGradient id="paint3_linear_1_473" x1="69.6001" y1="80.489" x2="55.6001" y2="80.489" gradientUnits="userSpaceOnUse"> <stop offset="0.005" stopColor="#2E4F41" /> <stop offset="1" stopColor="#2AAD6B" /> </linearGradient> <linearGradient id="paint4_linear_1_473" x1="41.7998" y1="83.7641" x2="27.7998" y2="83.7641" gradientUnits="userSpaceOnUse"> <stop offset="0.005" stopColor="#2E4F41" /> <stop offset="1" stopColor="#2AAD6B" /> </linearGradient> <linearGradient id="paint5_linear_1_473" x1="153" y1="84.8864" x2="139" y2="84.8864" gradientUnits="userSpaceOnUse"> <stop offset="0.005" stopColor="#2E4F41" /> <stop offset="1" stopColor="#2AAD6B" /> </linearGradient> </defs> </svg>
+                        <span className={styles.logoText}>KD-systems</span>
+                    </div>
+                    <button className={styles.menuToggle} onClick={toggleMenu}>
+                        {isMenuCollapsed ? <ChevronRight size={20} /> : <ChevronRight size={20} className={styles.rotate180} />}
+                    </button>
+                </div>
+
+                <div className={styles.sideMenuContent}>
+                    <nav className={styles.sideMenuNav}>
+                        <button className={styles.sideMenuItem} onClick={goHome}>
+                            <ArrowLeft className="h-5 w-5" />
+                            <span>Назад к проектам</span>
+                        </button>
+                        <button className={styles.sideMenuItem}>
+                            <Database className="h-5 w-5" />
+                            <span>Мои проекты</span>
+                        </button>
+                        <button className={styles.sideMenuItem}>
+                            <User className="h-5 w-5" />
+                            <span>Настройки профиля</span>
+                        </button>
+                        <button className={styles.sideMenuItem}>
+                            <Globe className="h-5 w-5" />
+                            <span>Помощь</span>
+                        </button>
+                    </nav>
+                </div>
+
+                <div className={styles.sideMenuFooter}>
+                    <div className={styles.userInfoSidebar}>
+                        <User className="h-5 w-5" />
+                        <span className={styles.username}>{username}</span>
+                    </div>
+                    <button onClick={handleLogout} className={styles.logoutButtonFull}>
+                        <LogOut className="h-5 w-5" />
+                        <span>Выйти</span>
+                    </button>
+                </div>
+            </div>
+
 
             <main className={styles.mainContainer}>
                 <h1 className={styles.projectTitle}>МосПолитех</h1>
@@ -846,17 +392,17 @@ const ProjectPage: React.FC = () => {
                     >
                         Базы знаний
                     </button>
-                    {/* <button
-                        className={`${styles.tab} ${activeTab === 'settings' ? styles.tabActive : ''}`}
-                        onClick={() => setActiveTab('settings')}
-                    >
-                        Настройки
-                    </button> */}
                     <button
                         className={`${styles.tab} ${activeTab === 'prompt' ? styles.tabActive : ''}`}
                         onClick={() => setActiveTab('prompt')}
                     >
                         Промпт
+                    </button>
+                    <button
+                        className={`${styles.tab} ${activeTab === 'analytics' ? styles.tabActive : ''}`}
+                        onClick={() => setActiveTab('analytics')}
+                    >
+                        Аналитика
                     </button>
                 </div>
 
@@ -918,17 +464,102 @@ const ProjectPage: React.FC = () => {
                     </div>
                 )}
 
-                {/* Трехколоночный интерфейс для вкладки Prompt */}
+                {activeTab === 'analytics' && (
+                    <div className={styles.analyticsTabContainer}>
+                        <div className={styles.analyticsHeader}>
+                            <h3 className={styles.sectionTitle}>Аналитика сессий</h3>
+                            <button
+                                className={styles.exportButton}
+                                onClick={exportToExcel}
+                            >
+                                <Download className="h-4 w-4 mr-2" />
+                                Экспорт в Excel
+                            </button>
+                        </div>
+
+                        <div className={styles.analyticsGrid}>
+                            <div className={styles.analyticsFilters}>
+                                <div className={styles.filterGroup}>
+                                    <label className={styles.filterLabel}>Источник:</label>
+                                    <select
+                                        className={styles.filterSelect}
+                                        name="source"
+                                        value={filters.source}
+                                        onChange={handleFilterChange}
+                                    >
+                                        <option value="all">Все</option>
+                                        <option value="telegram">Telegram</option>
+                                        <option value="whatsapp">WhatsApp</option>
+                                        <option value="vk">VK</option>
+                                        <option value="website">Сайт</option>
+                                    </select>
+                                </div>
+
+                                <div className={styles.filterGroup}>
+                                    <label className={styles.filterLabel}>Результат:</label>
+                                    <select
+                                        className={styles.filterSelect}
+                                        name="outcome"
+                                        value={filters.outcome}
+                                        onChange={handleFilterChange}
+                                    >
+                                        <option value="all">Все</option>
+                                        <option value="завершен_успешно">Успешно завершён</option>
+                                        <option value="передан_оператору">Передан оператору</option>
+                                        <option value="прерван_пользователем">Прерван пользователем</option>
+                                    </select>
+                                </div>
+
+                                <div className={styles.filterGroup}>
+                                    <label className={styles.filterLabel}>Дата:</label>
+                                    <input
+                                        type="date"
+                                        className={styles.filterInput}
+                                        name="date"
+                                        value={filters.date}
+                                        onChange={handleFilterChange}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className={styles.analyticsStats}>
+                            <div className={styles.statCard}>
+                                <h4>Всего сессий</h4>
+                                <p>{analyticsData.length}</p>
+                            </div>
+                            <div className={styles.statCard}>
+                                <h4>Средняя длительность</h4>
+                                <p>{Math.floor(analyticsData.reduce((acc, curr) => acc + curr.duration_seconds, 0) / analyticsData.length / 60)} мин</p>
+                            </div>
+                            <div className={styles.statCard}>
+                                <h4>Средняя уверенность</h4>
+                                <p>{Math.round(analyticsData.reduce((acc, curr) => acc + curr.percentage_confidence, 0) / analyticsData.length)}%</p>
+                            </div>
+                            <div className={styles.statCard}>
+                                <h4>Средняя оценка</h4>
+                                <p>
+                                    {(() => {
+                                        const grades = analyticsData.filter(s => typeof s.grade_NPS === 'number') as { grade_NPS: number }[];
+                                        return grades.length > 0
+                                            ? (grades.reduce((acc, curr) => acc + curr.grade_NPS, 0) / grades.length)
+                                            : 0;
+                                    })().toFixed(1)}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
                 {activeTab === 'prompt' && (
                     <div className={styles.promptTabContainer}>
-                        {/* Левая колонка - Промпт */}
                         <div className={styles.promptColumn}>
                             <div className={styles.promptContent}>
                                 <h3 className={styles.sectionTitle}>Системный промпт</h3>
                                 <p className={styles.promptHint}>
                                     {!isEditing
-                                        ? "Используйте кнопку 'Редактировать' для изменения промпта."
-                                        : "Начните вводить промпт, чтобы задать поведение бота."
+                                        ? `Используйте кнопку "Редактировать" для изменения промпта.`
+                                        : `Начните вводить промпт, чтобы задать поведение бота.`
                                     }
                                 </p>
                                 <textarea
@@ -946,79 +577,6 @@ const ProjectPage: React.FC = () => {
                                         {isEditing ? 'Сохранить' : 'Редактировать'}
                                     </button>
                                 )}
-                            </div>
-                        </div>
-
-                        {/* Средняя колонка - Настройки */}
-                        <div className={styles.settingsColumn}>
-                            <div className={styles.settingsContent}>
-                                <h3 className={styles.sectionTitle}>Настройки ответа</h3>
-
-                                <div className={styles.settingItem}>
-                                    <label>Тон общения</label>
-                                    <select className={styles.settingSelect}>
-                                        <option>Формальный</option>
-                                        <option>Дружелюбный</option>
-                                        <option>Технический</option>
-                                    </select>
-                                </div>
-
-                                <div className={styles.settingItem}>
-                                    <label>Длина ответа</label>
-                                    <select className={styles.settingSelect}>
-                                        <option>Краткий</option>
-                                        <option>Средний</option>
-                                        <option>Подробный</option>
-                                    </select>
-                                </div>
-
-                                <div className={styles.settingItem}>
-                                    <label>Источники знаний</label>
-                                    <div className={styles.knowledgeSources}>
-                                        {knowledgeBases.map(base => (
-                                            <div key={base.id} className={styles.sourceItem}>
-                                                <input type="checkbox" id={`source-${base.id}`} defaultChecked />
-                                                <label htmlFor={`source-${base.id}`}>{base.name}</label>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Правая колонка - Тестирование */}
-                        <div className={styles.testingColumn}>
-                            <div className={styles.testingContent}>
-                                <h3 className={styles.sectionTitle}>Тестирование</h3>
-
-                                <div className={styles.chatWindow}>
-                                    {testResponses.length > 0 ? (
-                                        testResponses.map((msg, index) => (
-                                            <div key={index} className={styles.chatMessage}>
-                                                {msg}
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <p className={styles.emptyChatHint}>Начните диалог, чтобы проверить работу бота</p>
-                                    )}
-                                </div>
-
-                                <div className={styles.chatInputContainer}>
-                                    <input
-                                        type="text"
-                                        value={testMessage}
-                                        onChange={(e) => setTestMessage(e.target.value)}
-                                        placeholder="Введите тестовое сообщение..."
-                                        className={styles.chatInput}
-                                        onKeyPress={(e) => e.key === 'Enter' && handleSendTestMessage()}
-                                    />
-                                    <button
-                                        className={styles.sendButton}
-                                        onClick={handleSendTestMessage}
-                                    >
-                                        Отправить
-                                    </button>
-                                </div>
                             </div>
                         </div>
                     </div>
