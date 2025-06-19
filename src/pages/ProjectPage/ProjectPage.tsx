@@ -30,6 +30,13 @@ interface AnalyticsSession {
     grade_NPS: number | string;
 }
 
+interface Filters {
+    source: string;
+    outcome: string;
+    startDate: string;
+    endDate: string;
+}
+
 const ProjectPage: React.FC = () => {
     const [activeTab, setActiveTab] = useState<'knowledge' | 'prompt' | 'analytics'>('knowledge');
     const [showUploadModal, setShowUploadModal] = useState(false);
@@ -49,10 +56,11 @@ const ProjectPage: React.FC = () => {
     const [testResponses, setTestResponses] = useState<string[]>([]);
     const [isMenuCollapsed, setIsMenuCollapsed] = useState(false);
 
-    const [filters, setFilters] = useState({ // для аналитики
+    const [filters, setFilters] = useState<Filters>({
         source: 'all',
         outcome: 'all',
-        date: ''
+        startDate: '',
+        endDate: ''
     });
 
     const [analyticsData, setAnalyticsData] = useState<AnalyticsSession[]>([
@@ -242,7 +250,20 @@ const ProjectPage: React.FC = () => {
         return analyticsData.filter(session => {
             const matchesSource = filters.source === 'all' || session.source_appeal === filters.source;
             const matchesOutcome = filters.outcome === 'all' || session.session_outcome === filters.outcome;
-            const matchesDate = !filters.date || session.time_appeal.includes(filters.date.split('-').reverse().join('-'));
+
+            // Преобразуем дату сессии в Date объект
+            const sessionDate = new Date(session.time_appeal.split(' ')[0].split('-').reverse().join('-'));
+
+            // Проверяем диапазон дат
+            let matchesDate = true;
+            if (filters.startDate) {
+                const startDate = new Date(filters.startDate);
+                matchesDate = matchesDate && sessionDate >= startDate;
+            }
+            if (filters.endDate) {
+                const endDate = new Date(filters.endDate);
+                matchesDate = matchesDate && sessionDate <= endDate;
+            }
 
             return matchesSource && matchesOutcome && matchesDate;
         });
@@ -393,16 +414,16 @@ const ProjectPage: React.FC = () => {
                         Базы знаний
                     </button>
                     <button
-                        className={`${styles.tab} ${activeTab === 'prompt' ? styles.tabActive : ''}`}
-                        onClick={() => setActiveTab('prompt')}
-                    >
-                        Промпт
-                    </button>
-                    <button
                         className={`${styles.tab} ${activeTab === 'analytics' ? styles.tabActive : ''}`}
                         onClick={() => setActiveTab('analytics')}
                     >
                         Аналитика
+                    </button>
+                    <button
+                        className={`${styles.tab} ${activeTab === 'prompt' ? styles.tabActive : ''}`}
+                        onClick={() => setActiveTab('prompt')}
+                    >
+                        Промпт
                     </button>
                 </div>
 
@@ -511,12 +532,22 @@ const ProjectPage: React.FC = () => {
                                 </div>
 
                                 <div className={styles.filterGroup}>
-                                    <label className={styles.filterLabel}>Дата:</label>
+                                    <label className={styles.filterLabel}>Дата от:</label>
                                     <input
                                         type="date"
                                         className={styles.filterInput}
-                                        name="date"
-                                        value={filters.date}
+                                        name="startDate"
+                                        value={filters.startDate}
+                                        onChange={handleFilterChange}
+                                    />
+                                </div>
+                                <div className={styles.filterGroup}>
+                                    <label className={styles.filterLabel}>Дата до:</label>
+                                    <input
+                                        type="date"
+                                        className={styles.filterInput}
+                                        name="endDate"
+                                        value={filters.endDate}
                                         onChange={handleFilterChange}
                                     />
                                 </div>
