@@ -1,255 +1,182 @@
-// import { createContext, ReactNode, useContext, useReducer, useEffect } from 'react';
+import { createContext, ReactNode, useContext, useReducer, useEffect, useCallback } from 'react';
 
-// type AuthState = {
-//     isAuthenticated: boolean;
-//     isAdmin: boolean;
-//     username?: string;
-//     token?: string;
-// }
+// Типы
+type User = {
+    id: string;
+    username: string;
+    role: 'user' | 'admin';
+    email?: string;
+};
 
-// type AuthAction = {
-//     type: 'LOGIN' | 'LOGOUT';
-//     payload?: {
-//         username?: string;
-//         token?: string;
-//         isAdmin?: boolean;
-//     }
-// }
-
-// type AuthContextType = {
-//     state: AuthState;
-//     login: (username: string, token: string, isAdmin: boolean, rememberMe: boolean) => void;
-//     logout: () => void;
-//     initializeAuth: () => void;
-// }
-
-// const authInitState: AuthState = {
-//     isAuthenticated: false,
-//     isAdmin: false
-// }
-
-// export const AuthContext = createContext<AuthContextType>({} as AuthContextType);
-
-// type ProviderProps = {
-//     children: ReactNode
-// }
-
-// const authReducer = (state: AuthState, action: AuthAction): AuthState => {
-//     switch (action.type) {
-//         case 'LOGIN':
-//             return {
-//                 isAuthenticated: true,
-//                 isAdmin: action.payload?.isAdmin || false,
-//                 username: action.payload?.username,
-//                 token: action.payload?.token
-//             };
-//         case 'LOGOUT':
-//             return authInitState;
-//         default:
-//             return state
-//     }
-// }
-
-// export const AuthContextProvider = ({ children }: ProviderProps) => {
-//     const [state, dispatch] = useReducer(authReducer, authInitState);
-
-//     const initializeAuth = () => {
-//         const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-//         if (token) {
-//             try {
-//                 const payload = JSON.parse(atob(token.split('.')[1]));
-//                 dispatch({
-//                     type: 'LOGIN',
-//                     payload: {
-//                         username: payload.username,
-//                         token,
-//                         isAdmin: payload.isAdmin // Добавляем isAdmin из токена
-//                     }
-//                 });
-//             } catch (e) {
-//                 localStorage.removeItem('token');
-//                 sessionStorage.removeItem('token');
-//             }
-//         }
-//     };
-
-//     useEffect(() => {
-//         initializeAuth();
-//     }, []);
-
-//     const login = (username: string, token: string, isAdmin: boolean, rememberMe: boolean) => {
-//         if (rememberMe) {
-//             localStorage.setItem('token', token);
-//         } else {
-//             sessionStorage.setItem('token', token);
-//         }
-
-//         dispatch({
-//             type: 'LOGIN',
-//             payload: {
-//                 username,
-//                 token,
-//                 isAdmin
-//             }
-//         });
-//     };
-
-//     const logout = () => {
-//         localStorage.removeItem('token');
-//         sessionStorage.removeItem('token');
-//         dispatch({ type: 'LOGOUT' });
-//     };
-
-//     const value = {
-//         state,
-//         login,
-//         logout,
-//         initializeAuth
-//     };
-
-//     return (
-//         <AuthContext.Provider value={value}>
-//             {children}
-//         </AuthContext.Provider>
-//     );
-// };
-
-// export const useAuthContext = () => {
-//     return useContext(AuthContext);
-// };
-
-
-import { createContext, ReactNode, useContext, useReducer, useEffect } from 'react';
-
-// Тип для состояния аутентификации
 type AuthState = {
     isAuthenticated: boolean;
-    isAdmin: boolean;
-    username?: string;
-    token?: string;
-    user?: {  // Добавлен объект пользователя для более структурированного хранения данных
-        username?: string;
-        isAdmin?: boolean;
-    };
-}
+    user: User | null;
+    token: string | null;
+    isLoading: boolean;
+};
 
-// Тип для действий аутентификации
-type AuthAction = {
-    type: 'LOGIN' | 'LOGOUT';
-    payload?: {
-        username?: string;
-        token?: string;
-        isAdmin?: boolean;
-    }
-}
+type AuthAction =
+    | { type: 'LOGIN'; payload: { user: User; token: string } }
+    | { type: 'LOGOUT' }
+    | { type: 'INITIALIZE'; payload: { user: User | null; token: string | null } };
 
-// Тип для контекста аутентификации
 type AuthContextType = {
     state: AuthState;
-    login: (username: string, token: string, isAdmin: boolean, rememberMe: boolean) => void;
+    login: (username: string, token: string, role: string, rememberMe: boolean) => Promise<void>;
     logout: () => void;
-    initializeAuth: () => void;
-}
+    register: (userData: { username: string; password: string; role: 'user' | 'admin' }) => Promise<void>;
+};
 
-// Начальное состояние аутентификации
-const authInitState: AuthState = {
+// Контекст
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+// Начальное состояние
+const initialState: AuthState = {
     isAuthenticated: false,
-    isAdmin: false,
-    user: {} // Инициализируем объект пользователя
-}
+    user: null,
+    token: null,
+    isLoading: true,
+};
 
-// Создаем контекст
-export const AuthContext = createContext<AuthContextType>({} as AuthContextType);
-
-// Пропсы для провайдера
-type ProviderProps = {
-    children: ReactNode
-}
-
-// Редуктор для управления состоянием аутентификации
+// Редуктор
 const authReducer = (state: AuthState, action: AuthAction): AuthState => {
     switch (action.type) {
+        case 'INITIALIZE':
+            return {
+                ...state,
+                isAuthenticated: !!action.payload.user,
+                user: action.payload.user,
+                token: action.payload.token,
+                isLoading: false,
+            };
         case 'LOGIN':
             return {
                 ...state,
                 isAuthenticated: true,
-                isAdmin: action.payload?.isAdmin || false,
-                username: action.payload?.username, // Сохраняем для обратной совместимости
-                token: action.payload?.token,
-                user: {  // Сохраняем данные пользователя в структурированном виде
-                    username: action.payload?.username,
-                    isAdmin: action.payload?.isAdmin
-                }
+                user: action.payload.user,
+                token: action.payload.token,
             };
         case 'LOGOUT':
-            return authInitState;
+            return {
+                ...state,
+                isAuthenticated: false,
+                user: null,
+                token: null,
+            };
         default:
             return state;
     }
-}
+};
 
-// Провайдер контекста аутентификации
-export const AuthContextProvider = ({ children }: ProviderProps) => {
-    const [state, dispatch] = useReducer(authReducer, authInitState);
+// Провайдер
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+    const [state, dispatch] = useReducer(authReducer, initialState);
 
-    // Инициализация аутентификации при загрузке приложения
-    const initializeAuth = () => {
-        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-        if (token) {
-            try {
+    // Инициализация аутентификации
+    const initializeAuth = useCallback(async () => {
+        try {
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+
+            if (token) {
+                // Здесь должна быть проверка токена на сервере или его валидация
+                // Для примера просто декодируем JWT (в реальном приложении нужно проверять на сервере!)
                 const payload = JSON.parse(atob(token.split('.')[1]));
-                dispatch({
-                    type: 'LOGIN',
-                    payload: {
-                        username: payload.username,
-                        token,
-                        isAdmin: payload.isAdmin
-                    }
-                });
-            } catch (e) {
-                // Если токен поврежден, очищаем хранилище
-                localStorage.removeItem('token');
-                sessionStorage.removeItem('token');
-            }
-        }
-    };
 
-    // При монтировании компонента инициализируем аутентификацию
-    useEffect(() => {
-        initializeAuth();
+                dispatch({
+                    type: 'INITIALIZE',
+                    payload: {
+                        user: {
+                            id: payload.sub,
+                            username: payload.username,
+                            role: payload.role,
+                            email: payload.email,
+                        },
+                        token,
+                    },
+                });
+            } else {
+                dispatch({ type: 'INITIALIZE', payload: { user: null, token: null } });
+            }
+        } catch (error) {
+            console.error('Auth initialization error:', error);
+            dispatch({ type: 'INITIALIZE', payload: { user: null, token: null } });
+        }
     }, []);
 
-    // Функция входа в систему
-    const login = (username: string, token: string, isAdmin: boolean, rememberMe: boolean) => {
-        if (rememberMe) {
-            localStorage.setItem('token', token);
-        } else {
-            sessionStorage.setItem('token', token);
-        }
+    // Вход в систему
+    const login = async (username: string, access_token: string, role: string, rememberMe: boolean) => {
+        try {
+            // Декодируем токен для получения данных пользователя
+            const payload = JSON.parse(atob(access_token.split('.')[1]));
 
-        dispatch({
-            type: 'LOGIN',
-            payload: {
-                username,
-                token,
-                isAdmin
+            const user = {
+                id: payload.sub,
+                username: payload.username || username,
+                role: payload.role || 'user'
+            };
+
+            // Выбираем способ хранения
+            if (rememberMe) {
+                localStorage.setItem('token', access_token);
+                localStorage.setItem('username', username);
+                localStorage.setItem('role', role);
+            } else {
+                sessionStorage.setItem('token', access_token);
+                sessionStorage.setItem('username', username);
+                sessionStorage.setItem('role', role);
             }
-        });
+
+            dispatch({ type: 'LOGIN', payload: { user, token: access_token } });
+        } catch (error) {
+            console.error('Login error:', error);
+            throw error;
+        }
     };
 
-    // Функция выхода из системы
+    // Выход из системы
     const logout = () => {
+        // Очищаем все возможные хранилища
         localStorage.removeItem('token');
         sessionStorage.removeItem('token');
+        localStorage.removeItem('username');
+        sessionStorage.removeItem('username');
+        localStorage.removeItem('role');
+        sessionStorage.removeItem('role');
         dispatch({ type: 'LOGOUT' });
     };
 
-    // Значение контекста
+    // Регистрация (только для админов)
+    const register = useCallback(async (userData: { username: string; password: string; role: 'user' | 'admin' }) => {
+        try {
+            const response = await fetch('/api/admin/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${state.token}`,
+                },
+                body: JSON.stringify(userData),
+            });
+
+            if (!response.ok) throw new Error('Registration failed');
+
+            return await response.json();
+        } catch (error) {
+            console.error('Registration error:', error);
+            throw error;
+        }
+    }, [state.token]);
+
+
+    // Инициализация при монтировании
+    useEffect(() => {
+        initializeAuth();
+    }, [initializeAuth]);
+
     const value = {
         state,
         login,
         logout,
-        initializeAuth
+        register,
     };
 
     return (
@@ -259,7 +186,22 @@ export const AuthContextProvider = ({ children }: ProviderProps) => {
     );
 };
 
-// Хук для удобного использования контекста
-export const useAuthContext = () => {
-    return useContext(AuthContext);
+// Хук для использования контекста
+export const useAuth = () => {
+    const context = useContext(AuthContext);
+    if (context === undefined) {
+        throw new Error('useAuth must be used within an AuthProvider');
+    }
+    return context;
+};
+
+// Хелперы для роутов
+export const useAuthCheck = () => {
+    const { state } = useAuth();
+    return {
+        isAuthenticated: state.isAuthenticated,
+        isAdmin: state.user?.role === 'admin',
+        user: state.user,
+        isLoading: state.isLoading,
+    };
 };

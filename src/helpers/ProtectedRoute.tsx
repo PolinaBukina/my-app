@@ -21,30 +21,36 @@
 // };
 
 
-// src/components/ProtectedRoute.tsx
-import { useAuthContext } from '../helpers/authContext';
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { useAuth, useAuthCheck } from './authContext';
 
 export const ProtectedRoute = () => {
-    const { state } = useAuthContext();
+    const { isAuthenticated, isLoading } = useAuthCheck();
+    const location = useLocation();
 
-    if (!state.isAuthenticated) {
-        return <Navigate to="/" replace />;
+    if (isLoading) {
+        return <div>Загрузка...</div>; // Или спиннер
+    }
+
+    if (!isAuthenticated) {
+        return <Navigate to="/" state={{ from: location }} replace />;
     }
 
     return <Outlet />;
 };
 
-export const AdminRoute = () => {
-    const { state } = useAuthContext();
+// export const ProtectedRoute = () => {
+//     const { state } = useAuth();
+//     const location = useLocation();
 
-    if (!state.isAuthenticated) {
-        return <Navigate to="/" replace />;
-    }
+//     // if (!state.isAuthenticated) {
+//     //     return <Navigate to="/" state={{ from: location }} replace />;
+//     // }
 
-    if (!state.isAdmin) {
-        return <Navigate to="/dashboard" replace />;
-    }
+//     // Дополнительная проверка для админских маршрутов
+//     if (location.pathname.startsWith('/admin') && state.user?.role !== 'admin') {
+//         return <Navigate to="/" replace />;
+//     }
 
-    return <Outlet />;
-};
+//     return <Outlet />;
+// };

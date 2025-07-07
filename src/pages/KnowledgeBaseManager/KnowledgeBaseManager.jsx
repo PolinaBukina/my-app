@@ -3,6 +3,8 @@ import { Database, Trash2, Upload, FileText, Menu, LogOut, ChevronRight, Globe, 
 import styles from './styles.module.css';
 
 const KnowledgeBaseManagerWithMenu = () => {
+    const { logout } = useAuth();
+
     const projectInfo = {
         id: 'mospolitech',
         name: 'МосПолитех',
@@ -17,7 +19,10 @@ const KnowledgeBaseManagerWithMenu = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(true);
 
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-    const handleLogout = () => console.log('Выход из системы');
+    const handleLogout = () => {
+        logout();
+        navigate('/');
+    };
     const backToProjects = () => console.log('Возврат к списку проектов');
     const addKnowledgeBase = () => console.log('Добавление базы знаний');
     const deleteKnowledgeBase = (kbId) => console.log('Удаление базы знаний:', kbId);

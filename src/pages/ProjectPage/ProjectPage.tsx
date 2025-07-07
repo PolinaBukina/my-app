@@ -1,16 +1,10 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Database, Menu, ChevronRight, Globe, LogOut, ChevronDown, Upload, Download, Trash2, Eye, ChevronLeft, X, User, BarChart2, ArrowLeft } from 'lucide-react';
+import { Database, ChevronRight, Globe, LogOut, Upload, Download, Trash2, Eye, X, User, ArrowLeft } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import styles from './styles.module.css';
-import { useAuthContext } from '../../helpers/authContext';
-
-interface KnowledgeBase {
-    id: string;
-    name: string;
-    date: string;
-    size: string;
-}
+import { useAuth } from '../../helpers/authContext';
+import { API_BASE_URL } from '../../types/api';
 
 interface AnalyticsSession {
     session_uuid: string;
@@ -42,18 +36,20 @@ const ProjectPage: React.FC = () => {
     const [showUploadModal, setShowUploadModal] = useState(false);
     const [dragActive, setDragActive] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
-    const [knowledgeBases, setKnowledgeBases] = useState<KnowledgeBase[]>([
-        { id: '1', name: 'Техническая документация', date: '15.05.2025', size: '2.4 MB' },
-        { id: '2', name: 'FAQ продукта', date: '10.05.2025', size: '1.1 MB' },
-        { id: '3', name: 'История поддержки', date: '05.05.2025', size: '3.7 MB' },
-    ]);
+    // const [knowledgeBases, setKnowledgeBases] = useState<KnowledgeBase[]>([
+    //     { id: '1', name: 'Техническая документация', date: '15.05.2025', size: '2.4 MB' },
+    //     { id: '2', name: 'FAQ продукта', date: '10.05.2025', size: '1.1 MB' },
+    //     { id: '3', name: 'История поддержки', date: '05.05.2025', size: '3.7 MB' },
+    // ]);
     const navigate = useNavigate();
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const { logout } = useAuth();
+    //загрузка файлов
+    const [uploadError, setUploadError] = useState<string | null>(null);
+    const [isUploading, setIsUploading] = useState(false);
 
     const [isEditing, setIsEditing] = useState(false);
     const [promptText, setPromptText] = useState('Текущий промпт...');
-    const [testMessage, setTestMessage] = useState('');
-    const [testResponses, setTestResponses] = useState<string[]>([]);
     const [isMenuCollapsed, setIsMenuCollapsed] = useState(false);
 
     const [filters, setFilters] = useState<Filters>({
@@ -62,6 +58,7 @@ const ProjectPage: React.FC = () => {
         startDate: '',
         endDate: ''
     });
+
 
     const [analyticsData, setAnalyticsData] = useState<AnalyticsSession[]>([
         {
@@ -160,38 +157,167 @@ const ProjectPage: React.FC = () => {
         }));
     };
 
-    const { state } = useAuthContext();
-    const username = state.user?.username || 'Пользователь';
+    const { state } = useAuth();
+    const username = state.user?.username || sessionStorage.getItem('username') || 'Пользователь';
 
     const handleDelete = async (id: string) => {
+        // try {
+        //     const response = await fetch(`${API_BASE_URL}/rag_service/clear_index/`, {
+        //         method: 'POST',
+        //         headers: {
+        //             'Authorization': `Bearer ${state.token}`
+        //         }
+        //     });
+
+        //     if (!response.ok) {
+        //         throw new Error('Ошибка очистки индекса');
+        //     }
+
+        //     // После очистки можно обновить список документов
+        //     await fetchKnowledgeBases();
+        //     alert('Все индексы и данные успешно очищены');
+        // } catch (error) {
+        //     console.error('Ошибка:', error);
+        //     alert('Произошла ошибка при очистке');
+        // }
+    };
+
+    const handleDownload = async (id: string) => {
         try {
-            await fetch(`http://localhost:3000/api/files/${id}`, {
-                method: 'DELETE',
+            const response = await fetch(`${API_BASE_URL}/rag_service/get_index/?id=${id}`, {
+                method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token') || sessionStorage.getItem('token')}`
+                    'Authorization': `Bearer ${state.token}`,
+                    'Content-Type': 'application/json'
                 }
             });
 
-            setKnowledgeBases(prev => prev.filter(base => base.id !== id));
+            if (!response.ok) {
+                throw new Error('Ошибка при получении файла');
+            }
+
+            // Получаем данные файла
+            const fileData = await response.json();
+
+            // Создаем временную ссылку для скачивания
+            const blob = new Blob([JSON.stringify(fileData, null, 2)], { type: 'application/json' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+
+            // Находим имя файла в knowledgeBases
+            const file = knowledgeBases.find(kb => kb.id === id);
+            a.download = file ? `${file.name}.json` : `file_${id}.json`;
+
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+
+            console.log('Файл успешно скачан');
         } catch (error) {
-            console.error('Ошибка удаления:', error);
+            console.error('Ошибка скачивания:', error);
+            alert('Произошла ошибка при скачивании файла');
         }
     };
 
-    const handleSendTestMessage = () => {
-        if (!testMessage.trim()) return;
+    // Добавляем состояние для модального окна превью
+    const [previewModalOpen, setPreviewModalOpen] = useState(false);
+    const [previewContent, setPreviewContent] = useState<string>('');
+    const [isLoadingPreview, setIsLoadingPreview] = useState(false);
+    const [previewError, setPreviewError] = useState<string | null>(null);
 
-        const mockResponse = `Ответ на: "${testMessage}"`;
-        setTestResponses(prev => [...prev, `Вы: ${testMessage}`, `Бот: ${mockResponse}`]);
-        setTestMessage('');
+    const handlePreview = async (id: string) => {
+        // setIsLoadingPreview(true);
+        // setPreviewError(null);
+
+        // try {
+        //     // Проверяем, что id не пустой
+        //     if (!id || typeof id !== 'string') {
+        //         throw new Error('Неверный идентификатор файла');
+        //     }
+
+        //     // Кодируем id для URL
+        //     const encodedId = encodeURIComponent(id);
+
+        //     const response = await fetch(`${API_BASE_URL}/rag_service/get_index/?id=${encodedId}`, {
+        //         method: 'GET',
+        //         headers: {
+        //             'Authorization': `Bearer ${state.token}`,
+        //             'Content-Type': 'application/json'
+        //         }
+        //     });
+
+        //     if (!response.ok) {
+        //         const errorData = await response.json().catch(() => ({}));
+        //         throw new Error(errorData.message || 'Ошибка при получении содержимого файла');
+        //     }
+
+        //     const data = await response.json();
+
+        //     // Проверяем и форматируем данные
+        //     if (typeof data === 'object' && data !== null) {
+        //         setPreviewContent(JSON.stringify(data, null, 2));
+        //     } else if (typeof data === 'string') {
+        //         setPreviewContent(data);
+        //     } else {
+        //         setPreviewContent('Содержимое файла недоступно для предпросмотра');
+        //     }
+
+        //     setPreviewModalOpen(true);
+        // } catch (error) {
+        //     console.error('Ошибка при загрузке превью:', error);
+        //     setPreviewError(error instanceof Error ? error.message : 'Неизвестная ошибка');
+        // } finally {
+        //     setIsLoadingPreview(false);
+        // }
     };
 
-    const handleDownload = (id: string) => {
-        console.log('Скачивание базы знаний:', id);
-    };
+    // Компонент модального окна для превью
+    const PreviewModal = () => {
+        if (!previewModalOpen) return null;
 
-    const handlePreview = (id: string) => {
-        console.log('Предпросмотр базы знаний:', id);
+        return (
+            <div className={styles.modalOverlay}>
+                <div className={styles.modal} style={{ maxWidth: '800px', width: '90%' }}>
+                    <div className={styles.modalHeader}>
+                        <h3 className={styles.modalTitle}>Просмотр файла</h3>
+                        <button
+                            onClick={() => setPreviewModalOpen(false)}
+                            className={styles.closeButton}
+                        >
+                            <X className="h-6 w-6" />
+                        </button>
+                    </div>
+
+                    <div className={styles.modalContent}>
+                        {isLoadingPreview ? (
+                            <div className={styles.loaderContainer}>
+                                <div className={styles.loader}>
+                                    <div className={styles.loaderCircle}></div>
+                                    <div className={styles.loaderText}>Загрузка содержимого...</div>
+                                </div>
+                            </div>
+                        ) : previewError ? (
+                            <div className={styles.errorMessage}>{previewError}</div>
+                        ) : (
+                            <pre className={styles.previewContent}>
+                                {previewContent}
+                            </pre>
+                        )}
+                    </div>
+
+                    <div className={styles.modalActions}>
+                        <button
+                            className={styles.cancelButton}
+                            onClick={() => setPreviewModalOpen(false)}
+                        >
+                            Закрыть
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
     };
 
     const handleBackToProjects = () => {
@@ -199,6 +325,7 @@ const ProjectPage: React.FC = () => {
     };
 
     const handleLogout = () => {
+        logout();
         navigate('/');
     };
 
@@ -216,19 +343,19 @@ const ProjectPage: React.FC = () => {
         e.preventDefault();
         e.stopPropagation();
         setDragActive(false);
+
+        if (isUploading) return;
+
         if (e.dataTransfer.files && e.dataTransfer.files[0]) {
             const file = e.dataTransfer.files[0];
             handleFileUpload(file);
         }
-    }, []);
-
-    const handleFileUpload = async (file: File) => {
-        console.log('пока не работает загрузка файлов')
-    };
+    }, [isUploading]);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (isUploading) return;
+
         if (e.target.files && e.target.files[0]) {
-            setUploadProgress(0);
             handleFileUpload(e.target.files[0]);
         }
         if (e.target) {
@@ -278,85 +405,129 @@ const ProjectPage: React.FC = () => {
         XLSX.writeFile(workbook, "Аналитика_МосПолитех.xlsx");
     };
 
-    const renderConfidenceBadge = (percentage: number) => {
-        let color = '';
-        if (percentage >= 80) color = 'bg-green-100 text-green-800';
-        else if (percentage >= 50) color = 'bg-blue-100 text-blue-800';
-        else if (percentage >= 20) color = 'bg-yellow-100 text-yellow-800';
-        else color = 'bg-red-100 text-red-800';
-
-        return (
-            <span className={`px-2 py-1 rounded-full text-xs font-medium ${color}`}>
-                {percentage}%
-            </span>
-        );
-    };
-
-    const renderAssessmentBadge = (assessment: number) => {
-        const colors = [
-            'bg-red-100 text-red-800',
-            'bg-orange-100 text-orange-800',
-            'bg-yellow-100 text-yellow-800',
-            'bg-blue-100 text-blue-800',
-            'bg-green-100 text-green-800'
-        ];
-
-        return (
-            <span className={`px-2 py-1 rounded-full text-xs font-medium ${colors[assessment - 1]}`}>
-                {assessment}/5
-            </span>
-        );
-    };
-
     const toggleMenu = () => {
         setIsMenuCollapsed(!isMenuCollapsed);
     };
 
     const goHome = () => navigate(-1)
 
+
+    // Добавляем в интерфейс состояния
+    interface KnowledgeBase {
+        id: string;
+        name: string;
+        date: string;
+        size: string;
+        file_type: string;
+    }
+
+    // Модифицируем состояние
+    const [knowledgeBases, setKnowledgeBases] = useState<KnowledgeBase[]>([]);
+    const [isLoadingBases, setIsLoadingBases] = useState(false);
+    const [error, setError] = useState<string>(''); // Добавляем эту строку
+
+    const fetchKnowledgeBases = useCallback(async () => {
+        setIsLoadingBases(true);
+        try {
+            const response = await fetch(`${API_BASE_URL}/rag_service/list/`, {
+                headers: {
+                    'Authorization': `Bearer ${state.token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Ошибка загрузки списка баз знаний');
+            }
+
+            const data = await response.json();
+
+            const files = data
+                .filter((item: string) => item.startsWith("Files:"))
+                .map((fileString: string) => {
+                    const parts = fileString.split(" - ");
+                    const id = parts[0].replace("Files: ", "").trim();
+                    const fullName = parts[1].trim();
+
+                    const nameParts = fullName.split("_");
+                    const name = nameParts.length > 1
+                        ? nameParts.slice(1).join("_")
+                        : fullName;
+                    const fileType = name.split('.').pop()?.toUpperCase() || 'FILE';
+
+                    return {
+                        id,
+                        name,
+                        date: new Date().toLocaleDateString(),
+                        //size: 'N/A', // Size might not be available in this response
+                        file_type: fileType
+                    };
+                });
+
+            setKnowledgeBases(files);
+        } catch (error) {
+            console.error('Error fetching knowledge bases:', error);
+            setError('Ошибка при загрузке списка файлов');
+        } finally {
+            setIsLoadingBases(false);
+        }
+    }, [state.token]);
+
+    // Вызываем при монтировании компонента
+    useEffect(() => {
+        fetchKnowledgeBases();
+    }, [fetchKnowledgeBases]);
+
+    // Функция для загрузки файлов
+    const handleFileUpload = async (file: File) => {
+        if (!file) return;
+
+        setIsUploading(true);
+        setUploadProgress(0);
+        setUploadError(null);
+
+        const formData = new FormData();
+        formData.append('files', file);
+
+        try {
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+            if (!token) {
+                throw new Error('Необходима авторизация');
+            }
+
+            const response = await fetch(`${API_BASE_URL}/rag_service/upload_files/`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData,
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.detail || 'Ошибка при загрузке файла');
+            }
+
+            // Обновляем список баз знаний после успешной загрузки
+            await fetchKnowledgeBases();
+            setShowUploadModal(false);
+            setUploadProgress(100);
+        } catch (error) {
+            console.error('Ошибка загрузки:', error);
+            setUploadError(error instanceof Error ? error.message : 'Неизвестная ошибка');
+        } finally {
+            setIsUploading(false);
+        }
+    };
+
+    // Вспомогательная функция для форматирования размера файла
+    // const formatFileSize = (bytes: number): string => {
+    //     if (bytes < 1024) return `${bytes} Б`;
+    //     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} КБ`;
+    //     return `${(bytes / (1024 * 1024)).toFixed(1)} МБ`;
+    // };
+
     return (
         <div className={styles.container}>
-            {/* <nav className={styles.navbar}>
-                <div className={styles.navContainer}>
-                    <div className={styles.navContent}>
-                        <div className={styles.flex}>
-                            <button
-                                className={styles.backButton}
-                                onClick={handleBackToProjects}
-                            >
-                                <ChevronLeft className="h-5 w-5 mr-1" />
-                                Назад к проектам
-                            </button>
-
-                            <div className={styles.breadcrumbs}>
-                                <span>Проекты</span>
-                                <ChevronRight className="h-4 w-4 mx-2" />
-                                <span className={styles.breadcrumbActive}>МосПолитех</span>
-                            </div>
-                        </div>
-
-                        <div className={styles.navActions}>
-                            <div className={styles.userDropdown}>
-                                <div className={styles.userInfo}>
-                                    <User className="h-5 w-5 mr-2" />
-                                    <span>{username}</span>
-                                    <ChevronDown className="h-4 w-4 ml-1" />
-                                </div>
-                                <div className={styles.dropdownMenu}>
-                                    <button
-                                        className={styles.dropdownItem}
-                                        onClick={handleLogout}
-                                    >
-                                        <LogOut className="h-4 w-4 mr-2" />
-                                        Выйти
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </nav> */}
-
             <div className={`${styles.sideMenu} ${isMenuCollapsed ? styles.collapsed : ''}`}>
                 <div className={styles.sideMenuHeader}>
                     <div className={styles.logoContainer}>
@@ -427,7 +598,7 @@ const ProjectPage: React.FC = () => {
                     </button>
                 </div>
 
-                {activeTab === 'knowledge' && (
+                {/* {activeTab === 'knowledge' && (
                     <div className={styles.tabContent}>
                         <div className={styles.knowledgeBases}>
                             <h3 className={styles.sectionTitle}>Загруженные базы знаний</h3>
@@ -477,6 +648,78 @@ const ProjectPage: React.FC = () => {
                             <button
                                 className={styles.uploadButton}
                                 onClick={() => setShowUploadModal(true)}
+                            >
+                                <Upload className="h-5 w-5 mr-2" />
+                                Загрузить новую базу
+                            </button>
+                        </div>
+                    </div>
+                )} */}
+
+                {activeTab === 'knowledge' && (
+                    <div className={styles.tabContent}>
+                        <div className={styles.knowledgeBases}>
+                            <h3 className={styles.sectionTitle}>Загруженные базы знаний</h3>
+
+                            <div className={styles.knowledgeList}>
+                                {isLoadingBases ? (
+                                    <div className={styles.loaderContainer}>
+                                        <div className={styles.loader}>
+                                            <div className={styles.loaderCircle}></div>
+                                            <div className={styles.loaderText}>Загрузка файлов...</div>
+                                        </div>
+                                    </div>
+                                ) : error ? (
+                                    <div className={styles.errorMessage}>{error}</div>
+                                ) : knowledgeBases.length > 0 ? (
+                                    knowledgeBases.map(base => (
+                                        <div key={base.id} className={styles.knowledgeItem}>
+                                            <div className={styles.knowledgeInfo}>
+                                                <Database className="h-5 w-5 text-green-500 mr-3" />
+                                                <div>
+                                                    <h4 className={styles.knowledgeName}>{base.name}</h4>
+                                                    <div className={styles.knowledgeMeta}>
+                                                        <span>{base.date}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className={styles.knowledgeActions}>
+                                                <button
+                                                    className={styles.actionButton}
+                                                    onClick={() => handlePreview(base.id)}
+                                                    title="Предпросмотр"
+                                                >
+                                                    <Eye className="h-4 w-4" />
+                                                </button>
+                                                <button
+                                                    className={styles.actionButton}
+                                                    onClick={() => handleDownload(base.id)}
+                                                    title="Скачать"
+                                                >
+                                                    <Download className="h-4 w-4" />
+                                                </button>
+                                                <button
+                                                    className={`${styles.actionButton} ${styles.deleteButton}`}
+                                                    onClick={() => handleDelete(base.id)}
+                                                    title="Удалить"
+                                                >
+                                                    <Trash2 className="h-4 w-4" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className={styles.emptyState}>
+                                        Нет загруженных баз знаний
+                                    </div>
+                                )}
+                            </div>
+
+                            <button
+                                className={styles.uploadButton}
+                                onClick={() => setShowUploadModal(true)}
+                                disabled={isLoadingBases}
                             >
                                 <Upload className="h-5 w-5 mr-2" />
                                 Загрузить новую базу
@@ -613,7 +856,7 @@ const ProjectPage: React.FC = () => {
                     </div>
                 )}
 
-                {showUploadModal && (
+                {/* {showUploadModal && (
                     <div className={styles.modalOverlay}>
                         <div className={styles.modal}>
                             <div className={styles.modalHeader}>
@@ -667,6 +910,83 @@ const ProjectPage: React.FC = () => {
                                     onClick={() => fileInputRef.current?.click()}
                                 >
                                     {uploadProgress > 0 ? 'Загрузка...' : 'Выбрать файл'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )} */}
+                {showUploadModal && (
+                    <div className={styles.modalOverlay}>
+                        <div className={styles.modal}>
+                            <div className={styles.modalHeader}>
+                                <h3 className={styles.modalTitle}>Загрузка новой базы знаний</h3>
+                                <button
+                                    onClick={() => {
+                                        setShowUploadModal(false);
+                                        setUploadError(null);
+                                    }}
+                                    className={styles.closeButton}
+                                    disabled={isUploading}
+                                >
+                                    <X className="h-6 w-6" />
+                                </button>
+                            </div>
+
+                            {uploadError && (
+                                <div className={styles.errorMessage}>
+                                    {uploadError}
+                                </div>
+                            )}
+
+                            {uploadProgress > 0 && uploadProgress < 100 && (
+                                <div className={styles.progressBarContainer}>
+                                    <div
+                                        className={styles.progressBar}
+                                        style={{ width: `${uploadProgress}%` }}
+                                    >
+                                        {uploadProgress}%
+                                    </div>
+                                </div>
+                            )}
+
+                            <div
+                                className={`${styles.uploadArea} ${dragActive ? styles.dragActive : ''}`}
+                                onDragEnter={handleDrag}
+                                onDragLeave={handleDrag}
+                                onDragOver={handleDrag}
+                                onDrop={handleDrop}
+                                onClick={() => !isUploading && fileInputRef.current?.click()}
+                            >
+                                <Upload className="h-12 w-12 text-gray-400 mb-2" />
+                                <p>Перетащите файлы сюда или нажмите для выбора</p>
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    className={styles.fileInput}
+                                    onChange={handleFileChange}
+                                    accept=".pdf,.txt,.docx,.xlsx"
+                                    disabled={isUploading}
+                                />
+                                <p className={styles.fileTypesHint}>Поддерживаемые форматы: PDF, TXT, DOCX, XLSX</p>
+                            </div>
+
+                            <div className={styles.modalActions}>
+                                <button
+                                    className={styles.cancelButton}
+                                    onClick={() => {
+                                        setShowUploadModal(false);
+                                        setUploadError(null);
+                                    }}
+                                    disabled={isUploading}
+                                >
+                                    Отмена
+                                </button>
+                                <button
+                                    className={styles.confirmButton}
+                                    disabled={isUploading}
+                                    onClick={() => fileInputRef.current?.click()}
+                                >
+                                    {isUploading ? 'Загрузка...' : 'Выбрать файл'}
                                 </button>
                             </div>
                         </div>

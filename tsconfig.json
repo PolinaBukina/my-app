@@ -6,6 +6,9 @@
       "dom.iterable",
       "esnext"
     ],
+    "types": [
+      "axios"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -22,5 +25,5 @@
   },
   "include": [
     "src"
-  ]
+, "src/pages/UserDetailsPage/UserDetailsPage/.tsx"  ]
 }
