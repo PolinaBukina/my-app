@@ -775,16 +775,25 @@ const ProjectPage: React.FC = () => {
                                 </div>
 
                                 <div className={styles.filterGroup}>
-                                    <label className={styles.filterLabel}>Дата от:</label>
-                                    <input
-                                        type="date"
-                                        className={styles.filterInput}
-                                        name="startDate"
-                                        value={filters.startDate}
-                                        onChange={handleFilterChange}
-                                    />
+                                    <label className={styles.filterLabel}>Период отчёта:</label>
+                                    <div className={styles.inputsGroup}>
+                                        <input
+                                            type="date"
+                                            className={styles.filterInput}
+                                            name="startDate"
+                                            value={filters.startDate}
+                                            onChange={handleFilterChange}
+                                        />
+                                        <input
+                                            type="date"
+                                            className={styles.filterInput}
+                                            name="endDate"
+                                            value={filters.endDate}
+                                            onChange={handleFilterChange}
+                                        />
+                                    </div>
                                 </div>
-                                <div className={styles.filterGroup}>
+                                {/* <div className={styles.filterGroup}>
                                     <label className={styles.filterLabel}>Дата до:</label>
                                     <input
                                         type="date"
@@ -793,7 +802,7 @@ const ProjectPage: React.FC = () => {
                                         value={filters.endDate}
                                         onChange={handleFilterChange}
                                     />
-                                </div>
+                                </div> */}
                             </div>
                         </div>
 

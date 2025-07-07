@@ -703,6 +703,12 @@
     outline: none;
 }
 
+.inputsGroup {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
 .filterSelect,
 .filterInput {
     padding: 0.5rem 0.75rem;
